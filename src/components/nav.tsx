@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { BarChart3, DollarSign, FileText, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -25,11 +26,12 @@ export function Nav() {
             <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 py-3 sm:px-6">
                 {/* Logo / Brand */}
                 <Link href="/" className="flex items-center gap-3 shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                         src={selectedTeam.logoUrl}
                         alt={selectedTeam.name}
-                        className="h-8 w-8 object-contain transition-all duration-500"
+                        width={32}
+                        height={32}
+                        className="object-contain transition-all duration-500"
                     />
                     <div className="hidden sm:block">
                         <h1
