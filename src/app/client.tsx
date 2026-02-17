@@ -68,7 +68,7 @@ export function StandingsPageClient({ standings }: StandingsPageClientProps) {
                 rank: [...allTeamData]
                     .sort((a, b) => (b.goalsForPerGame - b.goalsAgainstPerGame) - (a.goalsForPerGame - a.goalsAgainstPerGame))
                     .findIndex((s) => s.abbrev === selectedTeam.abbreviation) + 1,
-                leagueAvg: 0,
+                leagueAvg: parseFloat((allTeamData.reduce((a, b) => a + (b.goalsForPerGame - b.goalsAgainstPerGame), 0) / allTeamData.length).toFixed(2)),
                 format: "decimal" as const,
             },
         ];
