@@ -1,4 +1,4 @@
-import { Standing, TeamStat, TeamStatsCollection, GameResult, PowerRanking } from "@/types/nhl";
+import { Standing, TeamStat, TeamStatsCollection, PowerRanking } from "@/types/nhl";
 
 const NHL_API_BASE = "https://api-web.nhle.com/v1";
 
@@ -78,27 +78,6 @@ export async function getStandings(): Promise<Standing[]> {
 // Team Stats (for edge stats / power ranking)
 // ============================================================
 
-interface NHLClubStatsResponse {
-  // The NHL API returns season stats in a nested format
-  [key: string]: unknown;
-}
-
-/** Available stat categories from the NHL API */
-const STAT_DEFINITIONS: Array<{
-  key: string;
-  label: string;
-  format: "percentage" | "decimal" | "integer";
-}> = [
-  { key: "goalsForPerGame", label: "Goals For / Game", format: "decimal" },
-  { key: "goalsAgainstPerGame", label: "Goals Against / Game", format: "decimal" },
-  { key: "powerPlayPct", label: "Power Play %", format: "percentage" },
-  { key: "penaltyKillPct", label: "Penalty Kill %", format: "percentage" },
-  { key: "shotsForPerGame", label: "Shots For / Game", format: "decimal" },
-  { key: "shotsAgainstPerGame", label: "Shots Against / Game", format: "decimal" },
-  { key: "faceoffWinPct", label: "Faceoff Win %", format: "percentage" },
-  { key: "savePct", label: "Save %", format: "percentage" },
-  { key: "shootingPct", label: "Shooting %", format: "percentage" },
-];
 
 /**
  * Compute team stats with league rankings.
