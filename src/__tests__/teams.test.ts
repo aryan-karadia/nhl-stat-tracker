@@ -8,7 +8,7 @@ describe("teams", () => {
   it("should have a default team", () => {
     const defaultTeam = getTeamByAbbrev(DEFAULT_TEAM_ABBREV);
     expect(defaultTeam).toBeDefined();
-    expect(defaultTeam?.name).toBe("Toronto Maple Leafs");
+    expect(defaultTeam?.name).toBe("Calgary Flames");
   });
 
   it("should find team by abbreviation", () => {
