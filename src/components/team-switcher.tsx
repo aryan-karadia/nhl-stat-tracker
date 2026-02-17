@@ -35,6 +35,9 @@ export function TeamSwitcher() {
                 className="flex items-center gap-3 rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-medium 
                    backdrop-blur-sm transition-all hover:bg-white/20 hover:shadow-lg w-full"
                 style={{ color: "var(--team-text, #fff)" }}
+                aria-label="Select NHL team"
+                aria-haspopup="menu"
+                aria-expanded={open}
             >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -55,6 +58,7 @@ export function TeamSwitcher() {
                     <div
                         className="absolute left-0 top-full z-50 mt-2 w-80 rounded-xl border border-white/10 bg-gray-900/95 
                         shadow-2xl backdrop-blur-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+                        role="menu"
                     >
                         {/* Search */}
                         <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
@@ -65,6 +69,7 @@ export function TeamSwitcher() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="flex-1 bg-transparent text-sm text-white placeholder:text-gray-500 outline-none"
+                                aria-label="Search teams"
                                 autoFocus
                             />
                         </div>
@@ -108,6 +113,7 @@ export function TeamSwitcher() {
                                                     ? "bg-white/15 text-white"
                                                     : "text-gray-300 hover:bg-white/10 hover:text-white"
                                             )}
+                                            role="menuitem"
                                         >
                                             {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img
