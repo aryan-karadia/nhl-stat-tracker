@@ -92,7 +92,8 @@ export function TeamSwitcher() {
                     alt={selectedTeam.name}
                     width={24}
                     height={24}
-                    className="h-6 w-6 object-contain"
+                    className="object-contain"
+                    style={{ width: '24px', height: '24px' }}
                 />
                 <span id="team-switcher-label" className="flex-1 text-left truncate">{selectedTeam.name}</span>
                 <ChevronsUpDown className="h-4 w-4 opacity-60" />
@@ -193,7 +194,8 @@ export function TeamSwitcher() {
                                                         alt={team.name}
                                                         width={20}
                                                         height={20}
-                                                        className="h-5 w-5 object-contain"
+                                                        className="object-contain"
+                                                        style={{ width: '20px', height: '20px' }}
                                                     />
                                                     <span className="flex-1 text-left">{team.name}</span>
                                                     <span className="text-[10px] text-gray-500 font-mono">{team.abbreviation}</span>
