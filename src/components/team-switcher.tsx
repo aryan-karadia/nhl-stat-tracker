@@ -71,10 +71,6 @@ export function TeamSwitcher() {
         }
     }, [open]);
 
-    // Reset focused index when search changes
-    useEffect(() => {
-        setFocusedIndex(-1);
-    }, [searchQuery]);
 
     return (
         <div className="relative">
@@ -104,8 +100,8 @@ export function TeamSwitcher() {
             {open && (
                 <>
                     {/* Backdrop */}
-                    <div 
-                        className="fixed inset-0 z-40" 
+                    <div
+                        className="fixed inset-0 z-40"
                         onClick={() => setOpen(false)}
                         aria-hidden="true"
                     />
@@ -126,7 +122,10 @@ export function TeamSwitcher() {
                                 type="text"
                                 placeholder="Search teams..."
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    setFocusedIndex(-1);
+                                }}
                                 className="flex-1 bg-transparent text-sm text-white placeholder:text-gray-500 outline-none"
                                 aria-label="Search teams"
                             />
@@ -157,7 +156,7 @@ export function TeamSwitcher() {
                                 const startIndex = filteredDivisions
                                     .slice(0, divIndex)
                                     .reduce((acc, d) => acc + d.teams.length, 0);
-                                
+
                                 return (
                                     <div key={division.name}>
                                         <div className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">
@@ -167,7 +166,7 @@ export function TeamSwitcher() {
                                             const globalIndex = startIndex + teamIndex;
                                             const isSelected = team.abbreviation === selectedTeam.abbreviation;
                                             const isFocused = globalIndex === focusedIndex;
-                                            
+
                                             return (
                                                 <button
                                                     key={team.abbreviation}
@@ -183,8 +182,8 @@ export function TeamSwitcher() {
                                                         isSelected
                                                             ? "bg-white/15 text-white"
                                                             : isFocused
-                                                            ? "bg-white/10 text-white"
-                                                            : "text-gray-300 hover:bg-white/10 hover:text-white"
+                                                                ? "bg-white/10 text-white"
+                                                                : "text-gray-300 hover:bg-white/10 hover:text-white"
                                                     )}
                                                 >
                                                     {/* eslint-disable-next-line @next/next/no-img-element */}
