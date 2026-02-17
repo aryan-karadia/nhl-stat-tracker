@@ -56,7 +56,7 @@ export function StandingsTable({ standings }: StandingsTableProps) {
                     </tr>
                 </thead>
                 <tbody>
-                    {sorted.map((s, idx) => {
+                    {sorted.map((s) => {
                         const isSelected = s.teamAbbrev === selectedTeam.abbreviation;
                         const playoff = getPlayoffIndicator(s);
                         // Draft pick is reverse of league standings

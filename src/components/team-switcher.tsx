@@ -79,8 +79,6 @@ export function TeamSwitcher() {
             <button
                 ref={triggerRef}
                 onClick={() => setOpen(!open)}
-                aria-haspopup="true"
-                aria-expanded={open}
                 aria-labelledby="team-switcher-label"
                 id="team-switcher-trigger"
                 className="flex items-center gap-3 rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-medium 
@@ -118,7 +116,6 @@ export function TeamSwitcher() {
                         aria-modal="true"
                         className="absolute left-0 top-full z-50 mt-2 w-80 rounded-xl border border-white/10 bg-gray-900/95 
                         shadow-2xl backdrop-blur-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
-                        role="menu"
                     >
                         {/* Search */}
                         <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
@@ -128,7 +125,7 @@ export function TeamSwitcher() {
                                 type="text"
                                 placeholder="Search teams..."
                                 value={searchQuery}
-                                onChange={(e) => {
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                     setSearchQuery(e.target.value);
                                     setFocusedIndex(-1);
                                 }}
@@ -209,37 +206,8 @@ export function TeamSwitcher() {
                                             );
                                         })}
                                     </div>
-                                    {division.teams.map((team) => (
-                                        <button
-                                            key={team.abbreviation}
-                                            onClick={() => {
-                                                setTeamAbbrev(team.abbreviation);
-                                                setOpen(false);
-                                                setSearchQuery("");
-                                            }}
-                                            className={cn(
-                                                "flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors",
-                                                team.abbreviation === selectedTeam.abbreviation
-                                                    ? "bg-white/15 text-white"
-                                                    : "text-gray-300 hover:bg-white/10 hover:text-white"
-                                            )}
-                                            role="menuitem"
-                                        >
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img
-                                                src={team.logoUrl}
-                                                alt={team.name}
-                                                className="h-5 w-5 object-contain"
-                                            />
-                                            <span className="flex-1 text-left">{team.name}</span>
-                                            <span className="text-[10px] text-gray-500 font-mono">{team.abbreviation}</span>
-                                            {team.abbreviation === selectedTeam.abbreviation && (
-                                                <Check className="h-4 w-4 text-green-400" />
-                                            )}
-                                        </button>
-                                    ))}
-                                </div>
-                            ))}
+                                );
+                            })}
                             {filteredDivisions.length === 0 && (
                                 <div className="px-4 py-8 text-center text-sm text-gray-500">
                                     No teams found

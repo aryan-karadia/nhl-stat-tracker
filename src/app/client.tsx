@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Standing, TeamStatsCollection, PowerRanking as PowerRankingType } from "@/types/nhl";
 import { useTeam } from "@/context/team-context";
 import { StandingsTable } from "@/components/standings/standings-table";
@@ -13,13 +13,10 @@ interface StandingsPageClientProps {
 
 export function StandingsPageClient({ standings }: StandingsPageClientProps) {
     const { selectedTeam } = useTeam();
-    const [teamStats, setTeamStats] = useState<TeamStatsCollection | null>(null);
-    const [powerRanking, setPowerRanking] = useState<PowerRankingType | null>(null);
-
     // Compute team-specific stats client-side from standings data
-    useEffect(() => {
+    const teamStats = useMemo<TeamStatsCollection | null>(() => {
         const team = standings.find((s) => s.teamAbbrev === selectedTeam.abbreviation);
-        if (!team) return;
+        if (!team) return null;
 
         // Build stats from standings
         const allTeamData = standings.map((s) => ({
@@ -73,26 +70,30 @@ export function StandingsPageClient({ standings }: StandingsPageClientProps) {
             },
         ];
 
-        setTeamStats({
+        return {
             teamAbbrev: selectedTeam.abbreviation,
             stats,
             topStats: stats.filter((s) => s.rank <= 10),
             worstStats: stats.filter((s) => s.rank >= 28),
-        });
+        };
+    }, [selectedTeam.abbreviation, standings]);
 
-        // Power ranking from last 10
+    const powerRanking = useMemo<PowerRankingType | null>(() => {
+        const team = standings.find((s) => s.teamAbbrev === selectedTeam.abbreviation);
+        if (!team) return null;
+
         const l10Points = team.l10Wins * 2 + team.l10OtLosses;
         const l10PointsPctg = l10Points / 20;
         const powerScore = Math.round(l10PointsPctg * 100);
 
-        setPowerRanking({
+        return {
             teamAbbrev: selectedTeam.abbreviation,
             last10Games: [],
             last10Record: `${team.l10Wins}-${team.l10Losses}-${team.l10OtLosses}`,
             last10PointsPctg: parseFloat((l10PointsPctg * 100).toFixed(1)),
             powerRankScore: powerScore,
             trend: l10PointsPctg >= 0.7 ? "hot" : l10PointsPctg >= 0.5 ? "warm" : "cold",
-        });
+        };
     }, [selectedTeam.abbreviation, standings]);
 
     return (
