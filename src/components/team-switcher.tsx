@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTeam } from "@/context/team-context";
@@ -86,10 +87,11 @@ export function TeamSwitcher() {
                    backdrop-blur-sm transition-all hover:bg-white/20 hover:shadow-lg w-full"
                 style={{ color: "var(--team-text, #fff)" }}
             >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                     src={selectedTeam.logoUrl}
                     alt={selectedTeam.name}
+                    width={24}
+                    height={24}
                     className="h-6 w-6 object-contain"
                 />
                 <span id="team-switcher-label" className="flex-1 text-left truncate">{selectedTeam.name}</span>
@@ -186,10 +188,11 @@ export function TeamSwitcher() {
                                                                 : "text-gray-300 hover:bg-white/10 hover:text-white"
                                                     )}
                                                 >
-                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img
+                                                    <Image
                                                         src={team.logoUrl}
                                                         alt={team.name}
+                                                        width={20}
+                                                        height={20}
                                                         className="h-5 w-5 object-contain"
                                                     />
                                                     <span className="flex-1 text-left">{team.name}</span>
