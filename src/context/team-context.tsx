@@ -33,13 +33,13 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         const saved = localStorage.getItem("nhl-selected-team");
         const savedScheme = localStorage.getItem("nhl-color-scheme") as ColorScheme | null;
 
-        // Defer state updates to avoid "cascading renders" error in ESLint
-        // This pattern ensures the updates happen in the next microtask
         if (saved && getTeamByAbbrev(saved)) {
-            Promise.resolve().then(() => setTeamAbbrevState(saved));
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setTeamAbbrevState(saved);
         }
         if (savedScheme === "regular" || savedScheme === "alternate") {
-            Promise.resolve().then(() => setColorSchemeState(savedScheme));
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setColorSchemeState(savedScheme);
         }
     }, []);
 
