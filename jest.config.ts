@@ -17,7 +17,7 @@ const config: Config = {
       },
     ],
   },
-  setupFilesAfterSetup: ["<rootDir>/src/test-setup.ts"],
+  setupFilesAfterEnv: ["<rootDir>/src/test-setup.ts"],
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
     "!src/**/*.d.ts",
