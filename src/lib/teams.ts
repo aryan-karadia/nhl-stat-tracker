@@ -218,7 +218,7 @@ export const NHL_TEAMS: TeamConfig[] = [
   // ======================== CENTRAL ========================
   {
     id: 17,
-    name: "Arizona Coyotes",
+    name: "Utah Hockey Club",
     abbreviation: "UTA",
     city: "Salt Lake City",
     division: "Central",

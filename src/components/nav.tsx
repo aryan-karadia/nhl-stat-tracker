@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, DollarSign, FileText, Trophy } from "lucide-react";
+import { DollarSign, FileText, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TeamSwitcher } from "@/components/team-switcher";
 import { useTeam } from "@/context/team-context";
