@@ -53,7 +53,7 @@ function ClauseBadge({ type }: { type: string }) {
 export function ContractsTable({ contracts }: ContractsTableProps) {
     const [sortKey, setSortKey] = useState<SortKey>("capHit");
     const [sortDir, setSortDir] = useState<SortDir>("desc");
-    const [expanded, setExpanded] = useState<number | null>(null);
+    const [expandedPlayerId, setExpandedPlayerId] = useState<number | null>(null);
 
     const handleSort = (key: SortKey) => {
         if (sortKey === key) {
@@ -112,9 +112,9 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                             <tr
                                 className={cn(
                                     "border-b border-white/5 cursor-pointer transition-colors",
-                                    expanded === contract.player.id ? "bg-white/10" : "hover:bg-white/5"
+                                    expandedPlayerId === contract.player.id ? "bg-white/10" : "hover:bg-white/5"
                                 )}
-                                onClick={() => setExpanded(expanded === contract.player.id ? null : contract.player.id)}
+                                onClick={() => setExpandedPlayerId(expandedPlayerId === contract.player.id ? null : contract.player.id)}
                             >
                                 <td className="px-4 py-3">
                                     <div className="flex items-center gap-2">
@@ -148,7 +148,7 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                                     <ClauseBadge type={contract.tradeClause.type} />
                                 </td>
                                 <td className="px-4 py-3">
-                                    {expanded === contract.player.id ? (
+                                    {expandedPlayerId === contract.player.id ? (
                                         <ChevronUp className="h-4 w-4 text-gray-400" />
                                     ) : (
                                         <ChevronDown className="h-4 w-4 text-gray-400" />
@@ -157,7 +157,7 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                             </tr>
 
                             {/* Expanded Contract Detail */}
-                            {expanded === contract.player.id && (
+                            {expandedPlayerId === contract.player.id && (
                                 <tr key={`detail-${contract.player.id}`}>
                                     <td colSpan={8} className="px-6 py-4 bg-white/5">
                                         <div className="grid gap-4 md:grid-cols-2">

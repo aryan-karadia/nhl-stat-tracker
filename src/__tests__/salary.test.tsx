@@ -184,6 +184,40 @@ describe("ContractsTable", () => {
         expect(screen.getByText("MTL")).toBeInTheDocument();
         expect(screen.getByText("VAN")).toBeInTheDocument();
     });
+
+    it("preserves expanded contract when sorting changes", () => {
+        const contracts = [
+            makeContract({
+                player: { id: 1, firstName: "Auston", lastName: "Matthews", fullName: "Auston Matthews", position: "C", jerseyNumber: "34", headshot: "url" },
+                capHit: 13250000,
+            }),
+            makeContract({
+                player: { id: 2, firstName: "John", lastName: "Tavares", fullName: "John Tavares", position: "C", jerseyNumber: "91", headshot: "url" },
+                capHit: 11000000,
+            }),
+            makeContract({
+                player: { id: 3, firstName: "William", lastName: "Nylander", fullName: "William Nylander", position: "RW", jerseyNumber: "88", headshot: "url" },
+                capHit: 11500000,
+            }),
+        ];
+        render(<ContractsTable contracts={contracts} />);
+
+        // Expand the second player (John Tavares) in the cap hit sorted list
+        fireEvent.click(screen.getByText("John Tavares"));
+
+        // Verify it's expanded
+        expect(screen.getByText("Contract Breakdown")).toBeInTheDocument();
+
+        // Sort by name (which will change the order)
+        fireEvent.click(screen.getByText("Player"));
+
+        // John Tavares should still be expanded even though the order changed
+        expect(screen.getByText("Contract Breakdown")).toBeInTheDocument();
+
+        // Verify John Tavares row still shows as expanded (has bg-white/10 class)
+        const tavaresRow = screen.getByText("John Tavares").closest("tr");
+        expect(tavaresRow).toHaveClass("bg-white/10");
+    });
 });
 
 // ── SalaryCapPageClient ────────────────────────────────
