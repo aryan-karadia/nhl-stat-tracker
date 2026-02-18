@@ -68,7 +68,7 @@ describe("DraftPicksPageClient", () => {
             render(<DraftPicksPageClient />);
             // With basePick = 1, we get James Chicken projection
             expect(screen.getByText("James Chicken")).toBeInTheDocument();
-            
+
             // Verify the projection card content is rendered
             expect(screen.getByText(/Kingston Frontenacs/i)).toBeInTheDocument();
             expect(screen.getByText(/Sources:/i)).toBeInTheDocument();
