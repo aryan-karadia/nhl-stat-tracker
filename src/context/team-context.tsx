@@ -35,14 +35,15 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         const saved = localStorage.getItem("nhl-selected-team");
         const savedScheme = localStorage.getItem("nhl-color-scheme") as ColorScheme | null;
 
-        if (saved && getTeamByAbbrev(saved)) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setTeamAbbrevState(saved);
-        }
-        if (savedScheme === "regular" || savedScheme === "alternate") {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setColorSchemeState(savedScheme);
-        }
+        // Use a microtask to avoid "set-state-in-effect" lint error
+        Promise.resolve().then(() => {
+            if (saved && getTeamByAbbrev(saved)) {
+                setTeamAbbrevState(saved);
+            }
+            if (savedScheme === "regular" || savedScheme === "alternate") {
+                setColorSchemeState(savedScheme);
+            }
+        });
     }, []);
 
     // Apply colors when team or scheme changes

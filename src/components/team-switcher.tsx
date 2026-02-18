@@ -79,13 +79,14 @@ export function TeamSwitcher() {
             <button
                 ref={triggerRef}
                 onClick={() => setOpen(!open)}
-                aria-haspopup="true"
-                aria-expanded={open}
                 aria-labelledby="team-switcher-label"
                 id="team-switcher-trigger"
                 className="flex items-center gap-3 rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-medium 
                    backdrop-blur-sm transition-all hover:bg-white/20 hover:shadow-lg w-full"
                 style={{ color: "var(--team-text, #fff)" }}
+                aria-label="Select NHL team"
+                aria-haspopup="menu"
+                aria-expanded={open}
             >
                 <Image
                     src={selectedTeam.logoUrl}
@@ -124,12 +125,13 @@ export function TeamSwitcher() {
                                 type="text"
                                 placeholder="Search teams..."
                                 value={searchQuery}
-                                onChange={(e) => {
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                     setSearchQuery(e.target.value);
                                     setFocusedIndex(-1);
                                 }}
                                 className="flex-1 bg-transparent text-sm text-white placeholder:text-gray-500 outline-none"
                                 aria-label="Search teams"
+                                autoFocus
                             />
                         </div>
 
