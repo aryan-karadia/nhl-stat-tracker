@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import { TeamProvider, useTeam } from "@/context/team-context";
 import { DEFAULT_TEAM_ABBREV, getTeamByAbbrev } from "@/lib/teams";
 
@@ -108,7 +108,7 @@ describe("TeamProvider and useTeam", () => {
         consoleSpy.mockRestore();
     });
 
-    it("loads saved team from localStorage on mount", () => {
+    it("loads saved team from localStorage on mount", async () => {
         localStorageMock.getItem.mockImplementation((key: string) => {
             if (key === "nhl-selected-team") return "EDM";
             return null;
@@ -116,17 +116,21 @@ describe("TeamProvider and useTeam", () => {
 
         const { result } = renderHook(() => useTeam(), { wrapper });
         // After useEffect runs, team should be EDM
-        expect(result.current.selectedTeam.abbreviation).toBe("EDM");
+        await waitFor(() => {
+            expect(result.current.selectedTeam.abbreviation).toBe("EDM");
+        });
     });
 
-    it("loads saved color scheme from localStorage on mount", () => {
+    it("loads saved color scheme from localStorage on mount", async () => {
         localStorageMock.getItem.mockImplementation((key: string) => {
             if (key === "nhl-color-scheme") return "alternate";
             return null;
         });
 
         const { result } = renderHook(() => useTeam(), { wrapper });
-        expect(result.current.colorScheme).toBe("alternate");
+        await waitFor(() => {
+            expect(result.current.colorScheme).toBe("alternate");
+        });
     });
 
     it("ignores invalid localStorage values", () => {
