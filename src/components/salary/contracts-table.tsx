@@ -193,7 +193,7 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                                                     {contract.tradeClause.allowedTeams && contract.tradeClause.allowedTeams.length > 0 && (
                                                         <div className="mt-2">
                                                             <span className="text-[10px] text-gray-500 uppercase">
-                                                                {contract.tradeClause.type === "M-NTC" ? "Trade List:" : "Protected Teams:"}
+                                                                {contract.tradeClause.type === "M-NTC" ? "Can Be Traded To:" : "Approved Destinations:"}
                                                             </span>
                                                             <div className="flex flex-wrap gap-1 mt-1">
                                                                 {contract.tradeClause.allowedTeams.map((team) => (
