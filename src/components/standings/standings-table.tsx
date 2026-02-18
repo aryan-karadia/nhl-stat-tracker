@@ -40,20 +40,20 @@ export function StandingsTable({ standings }: StandingsTableProps) {
             <table className="w-full text-sm">
                 <thead>
                     <tr className="border-b border-white/10 text-left text-xs font-medium uppercase tracking-wider text-gray-400">
-                        <th className="px-4 py-3 w-8">#</th>
-                        <th className="px-4 py-3">Team</th>
-                        <th className="px-4 py-3 text-center">GP</th>
-                        <th className="px-4 py-3 text-center">W</th>
-                        <th className="px-4 py-3 text-center">L</th>
-                        <th className="px-4 py-3 text-center">OTL</th>
-                        <th className="px-4 py-3 text-center font-bold">PTS</th>
-                        <th className="px-4 py-3 text-center">P%</th>
-                        <th className="px-4 py-3 text-center">RW</th>
-                        <th className="px-4 py-3 text-center">DIFF</th>
-                        <th className="px-4 py-3 text-center">STRK</th>
-                        <th className="px-4 py-3 text-center">L10</th>
-                        <th className="px-4 py-3 text-center">Draft</th>
-                        <th className="px-4 py-3 text-center">Status</th>
+                        <th scope="col" className="px-4 py-3 w-8">#</th>
+                        <th scope="col" className="px-4 py-3">Team</th>
+                        <th scope="col" className="px-4 py-3 text-center">GP</th>
+                        <th scope="col" className="px-4 py-3 text-center">W</th>
+                        <th scope="col" className="px-4 py-3 text-center">L</th>
+                        <th scope="col" className="px-4 py-3 text-center">OTL</th>
+                        <th scope="col" className="px-4 py-3 text-center font-bold">PTS</th>
+                        <th scope="col" className="px-4 py-3 text-center">P%</th>
+                        <th scope="col" className="px-4 py-3 text-center">RW</th>
+                        <th scope="col" className="px-4 py-3 text-center">DIFF</th>
+                        <th scope="col" className="px-4 py-3 text-center">STRK</th>
+                        <th scope="col" className="px-4 py-3 text-center">L10</th>
+                        <th scope="col" className="px-4 py-3 text-center">Draft</th>
+                        <th scope="col" className="px-4 py-3 text-center">Status</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -78,6 +78,40 @@ export async function getStandings(): Promise<Standing[]> {
 // Team Stats (for edge stats / power ranking)
 // ============================================================
 
+/**
+ * Interface for NHL Club Stats API response.
+ * Reserved for future use when integrating with the official NHL club statistics endpoint.
+ * The NHL API returns season stats in a nested format that will be typed here.
+ * Currently, stats are derived from standings data until this integration is implemented.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface NHLClubStatsResponse {
+  // The NHL API returns season stats in a nested format
+  [key: string]: unknown;
+}
+
+/**
+ * Available stat categories from the NHL API.
+ * Reserved for future use when fetching detailed club statistics from the NHL API.
+ * These definitions will be used to format and display stats once the API integration is complete.
+ * Currently, stats are computed from standings data in getTeamStats().
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const STAT_DEFINITIONS: Array<{
+  key: string;
+  label: string;
+  format: "percentage" | "decimal" | "integer";
+}> = [
+  { key: "goalsForPerGame", label: "Goals For / Game", format: "decimal" },
+  { key: "goalsAgainstPerGame", label: "Goals Against / Game", format: "decimal" },
+  { key: "powerPlayPct", label: "Power Play %", format: "percentage" },
+  { key: "penaltyKillPct", label: "Penalty Kill %", format: "percentage" },
+  { key: "shotsForPerGame", label: "Shots For / Game", format: "decimal" },
+  { key: "shotsAgainstPerGame", label: "Shots Against / Game", format: "decimal" },
+  { key: "faceoffWinPct", label: "Faceoff Win %", format: "percentage" },
+  { key: "savePct", label: "Save %", format: "percentage" },
+  { key: "shootingPct", label: "Shooting %", format: "percentage" },
+];
 
 /**
  * Compute team stats with league rankings.

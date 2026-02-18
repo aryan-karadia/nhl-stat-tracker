@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Standing, TeamStatsCollection, PowerRanking as PowerRankingType } from "@/types/nhl";
 import { useTeam } from "@/context/team-context";
 import { StandingsTable } from "@/components/standings/standings-table";
@@ -13,13 +14,10 @@ interface StandingsPageClientProps {
 
 export function StandingsPageClient({ standings }: StandingsPageClientProps) {
     const { selectedTeam } = useTeam();
-    const [teamStats, setTeamStats] = useState<TeamStatsCollection | null>(null);
-    const [powerRanking, setPowerRanking] = useState<PowerRankingType | null>(null);
-
     // Compute team-specific stats client-side from standings data
-    useEffect(() => {
+    const teamStats = useMemo<TeamStatsCollection | null>(() => {
         const team = standings.find((s) => s.teamAbbrev === selectedTeam.abbreviation);
-        if (!team) return;
+        if (!team) return null;
 
         // Build stats from standings
         const allTeamData = standings.map((s) => ({
@@ -68,7 +66,7 @@ export function StandingsPageClient({ standings }: StandingsPageClientProps) {
                 rank: [...allTeamData]
                     .sort((a, b) => (b.goalsForPerGame - b.goalsAgainstPerGame) - (a.goalsForPerGame - a.goalsAgainstPerGame))
                     .findIndex((s) => s.abbrev === selectedTeam.abbreviation) + 1,
-                leagueAvg: 0,
+                leagueAvg: parseFloat((allTeamData.reduce((a, b) => a + (b.goalsForPerGame - b.goalsAgainstPerGame), 0) / allTeamData.length).toFixed(2)),
                 format: "decimal" as const,
             },
         ];
@@ -83,7 +81,6 @@ export function StandingsPageClient({ standings }: StandingsPageClientProps) {
             });
         });
 
-        // Power ranking from last 10
         const l10Points = team.l10Wins * 2 + team.l10OtLosses;
         const l10PointsPctg = l10Points / 20;
         const powerScore = Math.round(l10PointsPctg * 100);
