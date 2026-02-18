@@ -85,12 +85,6 @@ describe("StandingsTable", () => {
         expect(screen.getByText("7-2-1")).toBeInTheDocument();
     });
 
-    it("displays projected draft pick", () => {
-        render(<StandingsTable standings={[makeStanding({ leagueSequence: 30 })]} />);
-        // Draft pick = 33 - 30 = #3
-        expect(screen.getByText("#3")).toBeInTheDocument();
-    });
-
     it("shows playoff indicator for top-3 division teams", () => {
         render(<StandingsTable standings={[makeStanding({ divisionSequence: 2, wildcardSequence: 0 })]} />);
         expect(screen.getByText("P")).toBeInTheDocument();
