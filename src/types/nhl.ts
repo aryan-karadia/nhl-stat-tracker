@@ -71,7 +71,13 @@ export type TradeClauseType = "NMC" | "NTC" | "M-NTC" | "none";
 export interface TradeClause {
   type: TradeClauseType;
   details: string;
-  allowedTeams?: string[]; // team abbreviations
+  /**
+   * Team abbreviations representing teams the player CAN be traded to.
+   * - For M-NTC: List of teams the player has approved for trade destinations
+   * - For NMC: Empty array (no teams allowed, player cannot be moved)
+   * - For NTC and "none": Undefined (not applicable)
+   */
+  allowedTeams?: string[];
 }
 
 export interface ContractYear {
