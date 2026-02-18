@@ -209,6 +209,8 @@ function generateMockContracts(teamAbbrev: string): PlayerContract[] {
 export async function getPlayerContracts(teamAbbrev: string): Promise<PlayerContract[]> {
   // Simulate network delay for realistic UX
   await new Promise((r) => setTimeout(r, 200));
+  // Temporarily throw an error to demonstrate error UI
+  throw new Error("API Error: Failed to fetch salary data");
   return generateMockContracts(teamAbbrev);
 }
 
