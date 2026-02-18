@@ -8,9 +8,9 @@ import { DEFAULT_TEAM_ABBREV, getTeamByAbbrev } from "@/lib/teams";
 
 // Mock localStorage
 const localStorageMock = (() => {
-    let store: Record<string, string> = {};
+    let store: Record<string, string | null> = {};
     return {
-        getItem: jest.fn((key: string) => store[key] ?? null),
+        getItem: jest.fn((key: string): string | null => store[key] ?? null),
         setItem: jest.fn((key: string, value: string) => { store[key] = value; }),
         removeItem: jest.fn((key: string) => { delete store[key]; }),
         clear: jest.fn(() => { store = {}; }),
@@ -109,32 +109,28 @@ describe("TeamProvider and useTeam", () => {
     });
 
     it("loads saved team from localStorage on mount", async () => {
-        localStorageMock.getItem.mockImplementation((key: string) => {
+        localStorageMock.getItem.mockImplementation((key: string): string | null => {
             if (key === "nhl-selected-team") return "EDM";
             return null;
         });
 
         const { result } = renderHook(() => useTeam(), { wrapper });
-        // After useEffect runs and microtask completes, team should be EDM
-        await waitFor(() => {
-            expect(result.current.selectedTeam.abbreviation).toBe("EDM");
-        });
+        // After useEffect runs, team should be EDM
+        await waitFor(() => expect(result.current.selectedTeam.abbreviation).toBe("EDM"));
     });
 
     it("loads saved color scheme from localStorage on mount", async () => {
-        localStorageMock.getItem.mockImplementation((key: string) => {
+        localStorageMock.getItem.mockImplementation((key: string): string | null => {
             if (key === "nhl-color-scheme") return "alternate";
             return null;
         });
 
         const { result } = renderHook(() => useTeam(), { wrapper });
-        await waitFor(() => {
-            expect(result.current.colorScheme).toBe("alternate");
-        });
+        await waitFor(() => expect(result.current.colorScheme).toBe("alternate"));
     });
 
     it("ignores invalid localStorage values", () => {
-        localStorageMock.getItem.mockImplementation((key: string) => {
+        localStorageMock.getItem.mockImplementation((key: string): string | null => {
             if (key === "nhl-selected-team") return "INVALID";
             if (key === "nhl-color-scheme") return "invalid-scheme";
             return null;

@@ -72,7 +72,7 @@ export function StandingsTable({ standings }: StandingsTableProps) {
                                         ? "bg-white/15 ring-1 ring-inset"
                                         : "hover:bg-white/5"
                                 )}
-                                style={isSelected ? { "--tw-ring-color": "var(--team-secondary)" } as React.CSSProperties : undefined}
+                                style={isSelected ? ({ "--tw-ring-color": "var(--team-secondary)" } as React.CSSProperties) : undefined}
                             >
                                 <td className="px-4 py-2.5 text-gray-500 font-mono text-xs">{s.leagueSequence}</td>
                                 <td className="px-4 py-2.5">

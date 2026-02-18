@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTeam } from "@/context/team-context";
 import { getTeamsByDivision } from "@/lib/teams";
 import { ColorScheme } from "@/types/nhl";
+import Image from "next/image";
 
 export function TeamSwitcher() {
     const { selectedTeam, colorScheme, setTeamAbbrev, setColorScheme } = useTeam();
@@ -19,6 +19,24 @@ export function TeamSwitcher() {
 
     const teamsByDivision = getTeamsByDivision();
     const divisions = ["Atlantic", "Metropolitan", "Central", "Pacific"];
+
+    // Handle Escape key to close dropdown
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape" && open) {
+                setOpen(false);
+                setSearchQuery("");
+            }
+        };
+
+        if (open) {
+            document.addEventListener("keydown", handleKeyDown);
+        }
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [open]);
 
     const filteredDivisions = divisions
         .map((div) => ({
