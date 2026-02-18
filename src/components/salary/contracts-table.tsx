@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useState } from "react";
+import React from "react";
 import { PlayerContract } from "@/types/nhl";
 import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronUp, Shield, ShieldAlert, ShieldX } from "lucide-react";
@@ -17,6 +18,15 @@ function formatMoney(amount: number): string {
 
 type SortKey = "capHit" | "position" | "yearsRemaining" | "name";
 type SortDir = "asc" | "desc";
+
+function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) {
+    if (sortKey !== col) return <ChevronDown className="h-3 w-3 opacity-30" />;
+    return sortDir === "desc" ? (
+        <ChevronDown className="h-3 w-3 text-white" />
+    ) : (
+        <ChevronUp className="h-3 w-3 text-white" />
+    );
+}
 
 function ClauseBadge({ type }: { type: string }) {
     if (type === "NMC")
@@ -63,14 +73,7 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
         return sortDir === "desc" ? -cmp : cmp;
     });
 
-    const SortIcon = ({ col }: { col: SortKey }) => {
-        if (sortKey !== col) return <ChevronDown className="h-3 w-3 opacity-30" />;
-        return sortDir === "desc" ? (
-            <ChevronDown className="h-3 w-3 text-white" />
-        ) : (
-            <ChevronUp className="h-3 w-3 text-white" />
-        );
-    };
+
 
     return (
         <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
@@ -79,23 +82,23 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                     <tr className="border-b border-white/10 text-left text-xs font-medium uppercase tracking-wider text-gray-400">
                         <th className="px-4 py-3">
                             <button onClick={() => handleSort("name")} className="flex items-center gap-1 hover:text-white transition-colors">
-                                Player <SortIcon col="name" />
+                                Player <SortIcon col="name" sortKey={sortKey} sortDir={sortDir} />
                             </button>
                         </th>
                         <th className="px-4 py-3">
                             <button onClick={() => handleSort("position")} className="flex items-center gap-1 hover:text-white transition-colors">
-                                Pos <SortIcon col="position" />
+                                Pos <SortIcon col="position" sortKey={sortKey} sortDir={sortDir} />
                             </button>
                         </th>
                         <th className="px-4 py-3 text-right">
                             <button onClick={() => handleSort("capHit")} className="flex items-center gap-1 ml-auto hover:text-white transition-colors">
-                                Cap Hit <SortIcon col="capHit" />
+                                Cap Hit <SortIcon col="capHit" sortKey={sortKey} sortDir={sortDir} />
                             </button>
                         </th>
                         <th className="px-4 py-3 text-right hidden sm:table-cell">AAV</th>
                         <th className="px-4 py-3 text-center">
                             <button onClick={() => handleSort("yearsRemaining")} className="flex items-center gap-1 mx-auto hover:text-white transition-colors">
-                                Years <SortIcon col="yearsRemaining" />
+                                Years <SortIcon col="yearsRemaining" sortKey={sortKey} sortDir={sortDir} />
                             </button>
                         </th>
                         <th className="px-4 py-3 text-center">Expiry</th>
@@ -190,7 +193,7 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                                                     {contract.tradeClause.allowedTeams && contract.tradeClause.allowedTeams.length > 0 && (
                                                         <div className="mt-2">
                                                             <span className="text-[10px] text-gray-500 uppercase">
-                                                                {contract.tradeClause.type === "M-NTC" ? "Trade List:" : "Protected Teams:"}
+                                                                {contract.tradeClause.type === "M-NTC" ? "Can Be Traded To:" : "Approved Destinations:"}
                                                             </span>
                                                             <div className="flex flex-wrap gap-1 mt-1">
                                                                 {contract.tradeClause.allowedTeams.map((team) => (

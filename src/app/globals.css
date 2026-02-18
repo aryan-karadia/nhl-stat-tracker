@@ -49,9 +49,9 @@
 
 :root {
   /* Team colors — dynamically set by TeamContext */
-  --team-primary: #00205B;
-  --team-secondary: #FFFFFF;
-  --team-accent: #003087;
+  --team-primary: #C8102E;
+  --team-secondary: #F1BE48;
+  --team-accent: #111111;
   --team-text: #FFFFFF;
   --radius: 0.625rem;
   --background: oklch(1 0 0);

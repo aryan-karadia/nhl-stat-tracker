@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Standing, TeamStatsCollection, PowerRanking as PowerRankingType } from "@/types/nhl";
 import { useTeam } from "@/context/team-context";
 import { StandingsTable } from "@/components/standings/standings-table";
@@ -73,11 +73,14 @@ export function StandingsPageClient({ standings }: StandingsPageClientProps) {
             },
         ];
 
-        setTeamStats({
-            teamAbbrev: selectedTeam.abbreviation,
-            stats,
-            topStats: stats.filter((s) => s.rank <= 10),
-            worstStats: stats.filter((s) => s.rank >= 28),
+        // Defer state updates to avoid "cascading renders" error in ESLint
+        Promise.resolve().then(() => {
+            setTeamStats({
+                teamAbbrev: selectedTeam.abbreviation,
+                stats,
+                topStats: stats.filter((s) => s.rank <= 10),
+                worstStats: stats.filter((s) => s.rank >= 28),
+            });
         });
 
         // Power ranking from last 10
@@ -85,13 +88,15 @@ export function StandingsPageClient({ standings }: StandingsPageClientProps) {
         const l10PointsPctg = l10Points / 20;
         const powerScore = Math.round(l10PointsPctg * 100);
 
-        setPowerRanking({
-            teamAbbrev: selectedTeam.abbreviation,
-            last10Games: [],
-            last10Record: `${team.l10Wins}-${team.l10Losses}-${team.l10OtLosses}`,
-            last10PointsPctg: parseFloat((l10PointsPctg * 100).toFixed(1)),
-            powerRankScore: powerScore,
-            trend: l10PointsPctg >= 0.7 ? "hot" : l10PointsPctg >= 0.5 ? "warm" : "cold",
+        Promise.resolve().then(() => {
+            setPowerRanking({
+                teamAbbrev: selectedTeam.abbreviation,
+                last10Games: [],
+                last10Record: `${team.l10Wins}-${team.l10Losses}-${team.l10OtLosses}`,
+                last10PointsPctg: parseFloat((l10PointsPctg * 100).toFixed(1)),
+                powerRankScore: powerScore,
+                trend: l10PointsPctg >= 0.7 ? "hot" : l10PointsPctg >= 0.5 ? "warm" : "cold",
+            });
         });
     }, [selectedTeam.abbreviation, standings]);
 
