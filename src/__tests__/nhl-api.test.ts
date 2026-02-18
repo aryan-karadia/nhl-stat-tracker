@@ -1,4 +1,4 @@
-import { getStandings, getTeamStats, getPowerRanking, getDraftPicks, getTeamRoster } from "@/lib/nhl-api";
+import { getStandings, getTeamStats, getPowerRanking, getTeamRoster } from "@/lib/nhl-api";
 
 // Mock global fetch
 const mockFetch = jest.fn();
@@ -176,44 +176,6 @@ describe("getPowerRanking", () => {
   });
 });
 
-// ── getDraftPicks ──────────────────────────────────────
-describe("getDraftPicks", () => {
-  it("returns picks from API response", async () => {
-    const mockPicks = [
-      { round: 1, pickInRound: 1, overallPickNumber: 1, teamAbbrev: "TOR", firstName: "Test", lastName: "Player", positionCode: "C", amateurClubName: "Club", amateurLeague: "OHL" },
-    ];
-
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ picks: mockPicks }),
-    });
-
-    const picks = await getDraftPicks(2025);
-    expect(picks).toHaveLength(1);
-    expect(picks[0].teamAbbrev).toBe("TOR");
-  });
-
-  it("returns empty array for 404 (future draft year)", async () => {
-    mockFetch.mockResolvedValueOnce({ ok: false, status: 404 });
-    const picks = await getDraftPicks(2030);
-    expect(picks).toEqual([]);
-  });
-
-  it("throws on non-404 API errors", async () => {
-    mockFetch.mockResolvedValueOnce({ ok: false, status: 500 });
-    await expect(getDraftPicks(2025)).rejects.toThrow("NHL API Error: 500");
-  });
-
-  it("returns empty array when picks is undefined", async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({}),
-    });
-
-    const picks = await getDraftPicks(2025);
-    expect(picks).toEqual([]);
-  });
-});
 
 // ── getTeamRoster ──────────────────────────────────────
 describe("getTeamRoster", () => {

@@ -109,45 +109,24 @@ describe("TeamProvider and useTeam", () => {
     });
 
     it("loads saved team from localStorage on mount", async () => {
-<<<<<<< feature/salary-cap
         localStorageMock.getItem.mockImplementation((key: string): string | null => {
-=======
-        localStorageMock.getItem.mockImplementation((key: string) => {
->>>>>>> main
             if (key === "nhl-selected-team") return "EDM";
             return null;
         });
 
         const { result } = renderHook(() => useTeam(), { wrapper });
-<<<<<<< feature/salary-cap
         // After useEffect runs, team should be EDM
         await waitFor(() => expect(result.current.selectedTeam.abbreviation).toBe("EDM"));
     });
 
     it("loads saved color scheme from localStorage on mount", async () => {
         localStorageMock.getItem.mockImplementation((key: string): string | null => {
-=======
-        // After useEffect runs and microtask completes, team should be EDM
-        await waitFor(() => {
-            expect(result.current.selectedTeam.abbreviation).toBe("EDM");
-        });
-    });
-
-    it("loads saved color scheme from localStorage on mount", async () => {
-        localStorageMock.getItem.mockImplementation((key: string) => {
->>>>>>> main
             if (key === "nhl-color-scheme") return "alternate";
             return null;
         });
 
         const { result } = renderHook(() => useTeam(), { wrapper });
-<<<<<<< feature/salary-cap
         await waitFor(() => expect(result.current.colorScheme).toBe("alternate"));
-=======
-        await waitFor(() => {
-            expect(result.current.colorScheme).toBe("alternate");
-        });
->>>>>>> main
     });
 
     it("ignores invalid localStorage values", () => {
