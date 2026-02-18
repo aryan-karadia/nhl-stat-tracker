@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTeam } from "@/context/team-context";
@@ -14,6 +14,24 @@ export function TeamSwitcher() {
 
     const teamsByDivision = getTeamsByDivision();
     const divisions = ["Atlantic", "Metropolitan", "Central", "Pacific"];
+
+    // Handle Escape key to close dropdown
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape" && open) {
+                setOpen(false);
+                setSearchQuery("");
+            }
+        };
+
+        if (open) {
+            document.addEventListener("keydown", handleKeyDown);
+        }
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [open]);
 
     const filteredDivisions = divisions
         .map((div) => ({
@@ -50,7 +68,19 @@ export function TeamSwitcher() {
             {open && (
                 <>
                     {/* Backdrop */}
-                    <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+                    <div 
+                        className="fixed inset-0 z-40" 
+                        onClick={() => setOpen(false)}
+                        aria-label="Close team selector"
+                        role="button"
+                        tabIndex={-1}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                setOpen(false);
+                            }
+                        }}
+                    />
 
                     <div
                         className="absolute left-0 top-full z-50 mt-2 w-80 rounded-xl border border-white/10 bg-gray-900/95 
