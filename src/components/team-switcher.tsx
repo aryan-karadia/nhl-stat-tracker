@@ -31,7 +31,7 @@ export function TeamSwitcher() {
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [open, setSearchQuery]);
+    }, [open]);
 
     const filteredDivisions = divisions
         .map((div) => ({
@@ -71,7 +71,7 @@ export function TeamSwitcher() {
                     <div 
                         className="fixed inset-0 z-40" 
                         onClick={() => setOpen(false)}
-                        aria-label="Close team selector"
+                        aria-hidden="true"
                     />
 
                     <div
