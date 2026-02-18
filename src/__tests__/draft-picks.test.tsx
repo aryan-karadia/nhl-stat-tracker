@@ -31,11 +31,11 @@ describe("DraftPicksPageClient", () => {
 
     it("changes active year on tab click", () => {
         render(<DraftPicksPageClient />);
-        const 2026Tab = screen.getByText("2026 Draft");
-        fireEvent.click(2026Tab);
+        const tab2026 = screen.getByText("2026 Draft");
+        fireEvent.click(tab2026);
 
         // The active year tab should have the team-primary background (check via style)
-        expect(2026Tab).toHaveStyle("background-color: var(--team-primary)");
+        expect(tab2026).toHaveStyle("background-color: var(--team-primary)");
     });
 
     it("renders at least one pick with overall number when 2025 is selected", () => {
