@@ -14,6 +14,7 @@ interface TeamContextValue {
 const TeamContext = createContext<TeamContextValue | null>(null);
 
 function applyTeamColors(team: TeamConfig, scheme: ColorScheme) {
+    if (typeof window === 'undefined') return;
     const colors = team.colors[scheme];
     const root = document.documentElement;
     root.style.setProperty("--team-primary", colors.primary);
@@ -30,6 +31,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
 
     // Load saved team from localStorage on mount
     useEffect(() => {
+        if (typeof window === 'undefined') return;
         const saved = localStorage.getItem("nhl-selected-team");
         const savedScheme = localStorage.getItem("nhl-color-scheme") as ColorScheme | null;
 
@@ -50,12 +52,16 @@ export function TeamProvider({ children }: { children: ReactNode }) {
 
     const setTeamAbbrev = useCallback((abbrev: string) => {
         setTeamAbbrevState(abbrev);
-        localStorage.setItem("nhl-selected-team", abbrev);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem("nhl-selected-team", abbrev);
+        }
     }, []);
 
     const setColorScheme = useCallback((scheme: ColorScheme) => {
         setColorSchemeState(scheme);
-        localStorage.setItem("nhl-color-scheme", scheme);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem("nhl-color-scheme", scheme);
+        }
     }, []);
 
     return (
