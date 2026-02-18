@@ -104,14 +104,14 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                     </tr>
                 </thead>
                 <tbody>
-                    {sorted.map((contract, idx) => (
-                        <Fragment key={idx}>
+                    {sorted.map((contract) => (
+                        <Fragment key={contract.player.id}>
                             <tr
                                 className={cn(
                                     "border-b border-white/5 cursor-pointer transition-colors",
-                                    expanded === idx ? "bg-white/10" : "hover:bg-white/5"
+                                    expanded === contract.player.id ? "bg-white/10" : "hover:bg-white/5"
                                 )}
-                                onClick={() => setExpanded(expanded === idx ? null : idx)}
+                                onClick={() => setExpanded(expanded === contract.player.id ? null : contract.player.id)}
                             >
                                 <td className="px-4 py-3">
                                     <div className="flex items-center gap-2">
@@ -145,7 +145,7 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                                     <ClauseBadge type={contract.tradeClause.type} />
                                 </td>
                                 <td className="px-4 py-3">
-                                    {expanded === idx ? (
+                                    {expanded === contract.player.id ? (
                                         <ChevronUp className="h-4 w-4 text-gray-400" />
                                     ) : (
                                         <ChevronDown className="h-4 w-4 text-gray-400" />
@@ -154,8 +154,8 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                             </tr>
 
                             {/* Expanded Contract Detail */}
-                            {expanded === idx && (
-                                <tr key={`detail-${idx}`}>
+                            {expanded === contract.player.id && (
+                                <tr key={`detail-${contract.player.id}`}>
                                     <td colSpan={8} className="px-6 py-4 bg-white/5">
                                         <div className="grid gap-4 md:grid-cols-2">
                                             {/* Contract Years */}
