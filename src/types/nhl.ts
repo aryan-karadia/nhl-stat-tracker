@@ -74,8 +74,8 @@ export interface TradeClause {
   /**
    * Team abbreviations representing teams the player CAN be traded to.
    * - For M-NTC: Array of teams the player has approved as trade destinations
-   * - For NMC: Empty array [] (no teams allowed, player cannot be moved)
-   * - For NTC and "none": Undefined (full protection or no protection, list not applicable)
+   * - For NMC: Empty array [] explicitly indicates no teams allowed (player cannot be moved)
+   * - For NTC and "none": Undefined (full protection via consent or no protection; list concept not applicable)
    */
   allowedTeams?: string[];
 }
