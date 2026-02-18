@@ -6,7 +6,7 @@ import { PlayerContract, TeamCapSummary, Player, TradeClause } from "@/types/nhl
 // to connect to a live source (PuckPedia, RapidAPI, etc.)
 // ============================================================
 
-const CURRENT_SALARY_CAP = 88_000_000; // 2024-25 salary cap
+const CURRENT_SALARY_CAP = 95_000_000; // 2025-26 salary cap
 
 /**
  * Generate mock contract data for a team's roster.

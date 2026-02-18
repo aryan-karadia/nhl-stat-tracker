@@ -32,7 +32,7 @@ export function SalaryCapPageClient() {
             } catch (err) {
                 console.error("Failed to fetch salary data:", err);
                 if (!cancelled) {
-                    setError("Failed to load salary cap data. Please try again later.");
+                    setError("Unable to load salary cap data. Please try again later.");
                 }
             } finally {
                 if (!cancelled) setLoading(false);
@@ -55,7 +55,7 @@ export function SalaryCapPageClient() {
 
     if (error) {
         return (
-            <div className="space-y-8">
+            <div className="space-y-6">
                 <div>
                     <h2 className="text-2xl font-bold">Salary Cap</h2>
                     <p className="text-sm text-gray-400 mt-1">
@@ -64,14 +64,22 @@ export function SalaryCapPageClient() {
                 </div>
                 <div className="rounded-xl border border-red-400/20 bg-red-500/10 p-6 backdrop-blur-sm">
                     <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 text-red-400 mt-0.5">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 className="text-sm font-semibold text-red-400">Error Loading Data</h3>
-                            <p className="text-sm text-gray-300 mt-1">{error}</p>
+                        <svg
+                            className="h-5 w-5 text-red-400 shrink-0 mt-0.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                            />
+                        </svg>
+                        <div className="flex-1">
+                            <h3 className="font-bold text-red-400">Error Loading Data</h3>
+                            <p className="mt-1 text-sm text-gray-300">{error}</p>
                         </div>
                     </div>
                 </div>
