@@ -78,7 +78,7 @@ describe("getTeamCapSummary", () => {
 
   it("has salary cap of 88M", async () => {
     const summary = await getTeamCapSummary("TOR");
-    expect(summary.salaryCap).toBe(88_000_000);
+    expect(summary.salaryCap).toBe(95_000_000);
   });
 
   it("cap space equals salaryCap minus totalCapHit", async () => {

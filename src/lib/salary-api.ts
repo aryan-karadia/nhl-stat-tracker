@@ -6,7 +6,7 @@ import { PlayerContract, TeamCapSummary, Player, TradeClause } from "@/types/nhl
 // to connect to a live source (PuckPedia, RapidAPI, etc.)
 // ============================================================
 
-const CURRENT_SALARY_CAP = 88_000_000; // 2024-25 salary cap
+const CURRENT_SALARY_CAP = 95_000_000; // 2025-26 salary cap
 
 /**
  * Generate mock contract data for a team's roster.
@@ -209,8 +209,6 @@ function generateMockContracts(teamAbbrev: string): PlayerContract[] {
 export async function getPlayerContracts(teamAbbrev: string): Promise<PlayerContract[]> {
   // Simulate network delay for realistic UX
   await new Promise((r) => setTimeout(r, 200));
-  // Temporarily throw an error to demonstrate error UI
-  throw new Error("API Error: Failed to fetch salary data");
   return generateMockContracts(teamAbbrev);
 }
 

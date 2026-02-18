@@ -41,7 +41,7 @@ describe("DraftPicksPageClient", () => {
     it("renders at least one pick with overall number when 2025 is selected", () => {
         render(<DraftPicksPageClient />);
         // Round 1 pick should always have an overall number in 2025 mock
-        expect(screen.getByText(/#\d+ overall/i)).toBeInTheDocument();
+        expect(screen.getAllByText(/#\d+ overall/i).length).toBeGreaterThan(0);
     });
 
     it("renders 'Pick position TBD' for future years (2026/2027)", () => {
@@ -51,11 +51,11 @@ describe("DraftPicksPageClient", () => {
     });
 
     it("displays traded pick indicator if pick is not own", async () => {
-        const randomSpy = jest.spyOn(Math, "random").mockReturnValue(0.1);
+        const randomSpy = jest.spyOn(Math, "random").mockReturnValue(0.8);
         try {
             render(<DraftPicksPageClient />);
-            // With Math.random mocked to a low value, the mock generator should produce traded picks deterministically.
-            expect(screen.getByText(/Via [A-Z]{3}/i)).toBeInTheDocument();
+            // Use a function matcher to handle text split across nodes by the icon
+            expect(screen.getByText((content) => content.includes("Via"))).toBeInTheDocument();
         } finally {
             randomSpy.mockRestore();
         }
@@ -76,14 +76,19 @@ describe("DraftPicksPageClient", () => {
             randomSpy.mockRestore();
         }
     });
-
     it("renders scouting report and sources in projection card", () => {
-        render(<DraftPicksPageClient />);
-        // Find the projection card for Round 1
-        const scoutingReports = screen.getAllByText(/Scouting Report/i);
-        expect(scoutingReports.length).toBeGreaterThan(0);
+        const randomSpy = jest.spyOn(Math, "random").mockReturnValue(0);
+        try {
+            render(<DraftPicksPageClient />);
+            // Projections should have content that resembles a scouting report
+            // Based on MOCK_PROJECTIONS, basePick 1 gives James Chicken report
+            const anyScoutingText = screen.getByText(/Exceptional two-way center/i);
+            expect(anyScoutingText).toBeInTheDocument();
 
-        const sources = screen.getAllByText(/Sources:/i);
-        expect(sources.length).toBeGreaterThan(0);
+            const sources = screen.getAllByText(/Sources:/i);
+            expect(sources.length).toBeGreaterThan(0);
+        } finally {
+            randomSpy.mockRestore();
+        }
     });
 });

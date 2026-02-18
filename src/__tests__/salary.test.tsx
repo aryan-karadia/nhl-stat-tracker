@@ -11,7 +11,7 @@ import type { TeamCapSummary, PlayerContract } from "@/types/nhl";
 function makeCapSummary(overrides: Partial<TeamCapSummary> = {}): TeamCapSummary {
     return {
         teamAbbrev: "TOR",
-        salaryCap: 88_000_000,
+        salaryCap: 95_000_000,
         totalCapHit: 80_000_000,
         capSpace: 8_000_000,
         activeRoster: 20,
