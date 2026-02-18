@@ -32,7 +32,6 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     // Load saved team from localStorage on mount
     useEffect(() => {
         if (typeof window === 'undefined') return;
-        
         const saved = localStorage.getItem("nhl-selected-team");
         const savedScheme = localStorage.getItem("nhl-color-scheme") as ColorScheme | null;
 
