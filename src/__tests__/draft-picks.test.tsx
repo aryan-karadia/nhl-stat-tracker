@@ -62,18 +62,19 @@ describe("DraftPicksPageClient", () => {
     });
 
     it("renders projected player card when projection exists", () => {
-        render(<DraftPicksPageClient />);
-        // The mock always generates a projection for Round 1 in 2025
-        // James Chicken or Michael Misa etc.
-        const projectionHeader = screen.queryByText(/Scouting Report/i);
-        if (projectionHeader) {
-            expect(projectionHeader).toBeInTheDocument();
+        // Mock Math.random to ensure pick #1 which has James Chicken projection
+        const randomSpy = jest.spyOn(Math, "random").mockReturnValue(0);
+        try {
+            render(<DraftPicksPageClient />);
+            // With basePick = 1, we get James Chicken projection
+            expect(screen.getByText("James Chicken")).toBeInTheDocument();
+            
+            // Verify the projection card content is rendered
+            expect(screen.getByText(/Kingston Frontenacs/i)).toBeInTheDocument();
+            expect(screen.getByText(/Sources:/i)).toBeInTheDocument();
+        } finally {
+            randomSpy.mockRestore();
         }
-
-        // Check for some common mock names from projections
-        const possibleNames = ["James Chicken", "Michael Misa", "Porter Martone"];
-        const found = possibleNames.some(name => screen.queryByText(name));
-        expect(found).toBe(true);
     });
 
     it("renders scouting report and sources in projection card", () => {
