@@ -14,6 +14,7 @@ interface TeamContextValue {
 const TeamContext = createContext<TeamContextValue | null>(null);
 
 function applyTeamColors(team: TeamConfig, scheme: ColorScheme) {
+    if (typeof window === 'undefined') return;
     const colors = team.colors[scheme];
     const root = document.documentElement;
     root.style.setProperty("--team-primary", colors.primary);
@@ -30,17 +31,19 @@ export function TeamProvider({ children }: { children: ReactNode }) {
 
     // Load saved team from localStorage on mount
     useEffect(() => {
+        if (typeof window === 'undefined') return;
         const saved = localStorage.getItem("nhl-selected-team");
         const savedScheme = localStorage.getItem("nhl-color-scheme") as ColorScheme | null;
 
-        // Defer state updates to avoid "cascading renders" error in ESLint
-        // This pattern ensures the updates happen in the next microtask
-        if (saved && getTeamByAbbrev(saved)) {
-            Promise.resolve().then(() => setTeamAbbrevState(saved));
-        }
-        if (savedScheme === "regular" || savedScheme === "alternate") {
-            Promise.resolve().then(() => setColorSchemeState(savedScheme));
-        }
+        // Use a microtask to avoid "set-state-in-effect" lint error
+        Promise.resolve().then(() => {
+            if (saved && getTeamByAbbrev(saved)) {
+                setTeamAbbrevState(saved);
+            }
+            if (savedScheme === "regular" || savedScheme === "alternate") {
+                setColorSchemeState(savedScheme);
+            }
+        });
     }, []);
 
     // Apply colors when team or scheme changes
@@ -50,12 +53,16 @@ export function TeamProvider({ children }: { children: ReactNode }) {
 
     const setTeamAbbrev = useCallback((abbrev: string) => {
         setTeamAbbrevState(abbrev);
-        localStorage.setItem("nhl-selected-team", abbrev);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem("nhl-selected-team", abbrev);
+        }
     }, []);
 
     const setColorScheme = useCallback((scheme: ColorScheme) => {
         setColorSchemeState(scheme);
-        localStorage.setItem("nhl-color-scheme", scheme);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem("nhl-color-scheme", scheme);
+        }
     }, []);
 
     return (

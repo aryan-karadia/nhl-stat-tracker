@@ -36,7 +36,7 @@ function generateMockContracts(teamAbbrev: string): PlayerContract[] {
       num: "29",
       capHit: 9_500_000,
       years: 4,
-      clause: { type: "M-NTC", details: "Modified no-trade clause — 10-team list", allowedTeams: ["TOR", "MTL", "VAN", "EDM", "CGY", "OTT", "WPG", "NYR", "BOS", "CHI"] },
+      clause: { type: "M-NTC", details: "Can be traded to 10 teams", allowedTeams: ["TOR", "MTL", "VAN", "EDM", "CGY", "OTT", "WPG", "NYR", "BOS", "CHI"] },
     },
     {
       name: "Elite Defenseman",
@@ -68,7 +68,7 @@ function generateMockContracts(teamAbbrev: string): PlayerContract[] {
       num: "5",
       capHit: 5_500_000,
       years: 4,
-      clause: { type: "M-NTC", details: "Modified NTC — 8-team no-trade list", allowedTeams: ["FLA", "TBL", "CAR", "NSH", "DAL", "COL", "VGK", "LAK"] },
+      clause: { type: "M-NTC", details: "Can be traded to 8 teams", allowedTeams: ["FLA", "TBL", "CAR", "NSH", "DAL", "COL", "VGK", "LAK"] },
     },
     {
       name: "Starting Goalie",

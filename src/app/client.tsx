@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Standing, TeamStatsCollection, PowerRanking as PowerRankingType } from "@/types/nhl";
+import React from "react";
+import { useMemo } from "react";
+import { PowerRanking, Standing, TeamStatsCollection } from "@/types/nhl";
 import { useTeam } from "@/context/team-context";
 import { StandingsTable } from "@/components/standings/standings-table";
 import { PowerRankingCard } from "@/components/standings/power-ranking";
@@ -13,13 +14,10 @@ interface StandingsPageClientProps {
 
 export function StandingsPageClient({ standings }: StandingsPageClientProps) {
     const { selectedTeam } = useTeam();
-    const [teamStats, setTeamStats] = useState<TeamStatsCollection | null>(null);
-    const [powerRanking, setPowerRanking] = useState<PowerRankingType | null>(null);
-
     // Compute team-specific stats client-side from standings data
-    useEffect(() => {
+    const { teamStats, powerRanking } = useMemo(() => {
         const team = standings.find((s) => s.teamAbbrev === selectedTeam.abbreviation);
-        if (!team) return;
+        if (!team) return { teamStats: null, powerRanking: null };
 
         // Build stats from standings
         const allTeamData = standings.map((s) => ({
@@ -68,31 +66,31 @@ export function StandingsPageClient({ standings }: StandingsPageClientProps) {
                 rank: [...allTeamData]
                     .sort((a, b) => (b.goalsForPerGame - b.goalsAgainstPerGame) - (a.goalsForPerGame - a.goalsAgainstPerGame))
                     .findIndex((s) => s.abbrev === selectedTeam.abbreviation) + 1,
-                leagueAvg: 0,
+                leagueAvg: parseFloat((allTeamData.reduce((a, b) => a + (b.goalsForPerGame - b.goalsAgainstPerGame), 0) / allTeamData.length).toFixed(2)),
                 format: "decimal" as const,
             },
         ];
 
-        setTeamStats({
-            teamAbbrev: selectedTeam.abbreviation,
-            stats,
-            topStats: stats.filter((s) => s.rank <= 10),
-            worstStats: stats.filter((s) => s.rank >= 28),
-        });
-
-        // Power ranking from last 10
         const l10Points = team.l10Wins * 2 + team.l10OtLosses;
         const l10PointsPctg = l10Points / 20;
         const powerScore = Math.round(l10PointsPctg * 100);
 
-        setPowerRanking({
-            teamAbbrev: selectedTeam.abbreviation,
-            last10Games: [],
-            last10Record: `${team.l10Wins}-${team.l10Losses}-${team.l10OtLosses}`,
-            last10PointsPctg: parseFloat((l10PointsPctg * 100).toFixed(1)),
-            powerRankScore: powerScore,
-            trend: l10PointsPctg >= 0.7 ? "hot" : l10PointsPctg >= 0.5 ? "warm" : "cold",
-        });
+        return {
+            teamStats: {
+                teamAbbrev: selectedTeam.abbreviation,
+                stats,
+                topStats: stats.filter((s) => s.rank <= 10),
+                worstStats: stats.filter((s) => s.rank >= 28),
+            } as TeamStatsCollection,
+            powerRanking: {
+                teamAbbrev: selectedTeam.abbreviation,
+                last10Games: [],
+                last10Record: `${team.l10Wins}-${team.l10Losses}-${team.l10OtLosses}`,
+                last10PointsPctg: parseFloat((l10PointsPctg * 100).toFixed(1)),
+                powerRankScore: powerScore,
+                trend: l10PointsPctg >= 0.7 ? "hot" : l10PointsPctg >= 0.5 ? "warm" : "cold",
+            } as PowerRanking,
+        };
     }, [selectedTeam.abbreviation, standings]);
 
     return (

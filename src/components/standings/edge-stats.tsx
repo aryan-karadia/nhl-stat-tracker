@@ -1,7 +1,8 @@
 "use client";
 
+import React from "react";
 import { TeamStatsCollection, TeamStat } from "@/types/nhl";
-import { TrendingUp, TrendingDown, Trophy, AlertTriangle } from "lucide-react";
+import { Trophy, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EdgeStatsProps {
