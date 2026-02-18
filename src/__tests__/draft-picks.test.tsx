@@ -51,12 +51,13 @@ describe("DraftPicksPageClient", () => {
     });
 
     it("displays traded pick indicator if pick is not own", async () => {
-        render(<DraftPicksPageClient />);
-        // Mock generates some traded picks. We might need to hunt for one or adjust mock for testing.
-        // Since it's random, we check if the element exists in some iterations or just check for text.
-        const viaText = screen.queryByText(/Via [A-Z]{3}/i);
-        if (viaText) {
-            expect(viaText).toBeInTheDocument();
+        const randomSpy = jest.spyOn(Math, "random").mockReturnValue(0.1);
+        try {
+            render(<DraftPicksPageClient />);
+            // With Math.random mocked to a low value, the mock generator should produce traded picks deterministically.
+            expect(screen.getByText(/Via [A-Z]{3}/i)).toBeInTheDocument();
+        } finally {
+            randomSpy.mockRestore();
         }
     });
 
