@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { useTeam } from "@/context/team-context";
 import { getTeamsByDivision } from "@/lib/teams";
 import { ColorScheme } from "@/types/nhl";
-import { Image } from "next";
+import Image from "next/image";
 
 export function TeamSwitcher() {
     const { selectedTeam, colorScheme, setTeamAbbrev, setColorScheme } = useTeam();
