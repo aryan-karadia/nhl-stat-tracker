@@ -92,8 +92,8 @@ describe("CapOverview", () => {
 describe("ContractsTable", () => {
     it("renders player names and positions", () => {
         const contracts = [
-            makeContract({ player: { ...makeContract().player, fullName: "Player A", position: "LW", jerseyNumber: "11" } }),
-            makeContract({ player: { ...makeContract().player, fullName: "Player B", position: "D", jerseyNumber: "22" } }),
+            makeContract({ player: { ...makeContract().player, id: 1, fullName: "Player A", position: "LW", jerseyNumber: "11" } }),
+            makeContract({ player: { ...makeContract().player, id: 2, fullName: "Player B", position: "D", jerseyNumber: "22" } }),
         ];
         render(<ContractsTable contracts={contracts} />);
         expect(screen.getByText("Player A")).toBeInTheDocument();
@@ -119,8 +119,8 @@ describe("ContractsTable", () => {
 
     it("sorts by cap hit descending by default", () => {
         const contracts = [
-            makeContract({ capHit: 1000000, player: { ...makeContract().player, fullName: "Cheap Player" } }),
-            makeContract({ capHit: 10000000, player: { ...makeContract().player, fullName: "Star Player" } }),
+            makeContract({ capHit: 1000000, player: { ...makeContract().player, id: 1, fullName: "Cheap Player" } }),
+            makeContract({ capHit: 10000000, player: { ...makeContract().player, id: 2, fullName: "Star Player" } }),
         ];
         render(<ContractsTable contracts={contracts} />);
 
@@ -131,8 +131,8 @@ describe("ContractsTable", () => {
 
     it("allows changing sort key", () => {
         const contracts = [
-            makeContract({ player: { ...makeContract().player, fullName: "Zebra" } }),
-            makeContract({ player: { ...makeContract().player, fullName: "Apple" } }),
+            makeContract({ player: { ...makeContract().player, id: 1, fullName: "Zebra" } }),
+            makeContract({ player: { ...makeContract().player, id: 2, fullName: "Apple" } }),
         ];
         render(<ContractsTable contracts={contracts} />);
 
