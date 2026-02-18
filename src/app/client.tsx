@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useMemo } from "react";
-import { Standing, TeamStatsCollection, PowerRanking as PowerRankingType } from "@/types/nhl";
+import { Standing, TeamStatsCollection } from "@/types/nhl";
 import { useTeam } from "@/context/team-context";
 import { StandingsTable } from "@/components/standings/standings-table";
 import { PowerRankingCard } from "@/components/standings/power-ranking";

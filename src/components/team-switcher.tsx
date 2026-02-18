@@ -1,16 +1,12 @@
 "use client";
 
-<<<<<<< feature/salary-cap
-import { useState, useEffect } from "react";
-=======
-import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
->>>>>>> main
+import { useState, useEffect, useRef } from "react";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTeam } from "@/context/team-context";
 import { getTeamsByDivision } from "@/lib/teams";
 import { ColorScheme } from "@/types/nhl";
+import { Image } from "next";
 
 export function TeamSwitcher() {
     const { selectedTeam, colorScheme, setTeamAbbrev, setColorScheme } = useTeam();
@@ -125,13 +121,8 @@ export function TeamSwitcher() {
             {open && (
                 <>
                     {/* Backdrop */}
-<<<<<<< feature/salary-cap
-                    <div 
-                        className="fixed inset-0 z-40" 
-=======
                     <div
                         className="fixed inset-0 z-40"
->>>>>>> main
                         onClick={() => setOpen(false)}
                         aria-hidden="true"
                     />
