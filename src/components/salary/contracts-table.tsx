@@ -155,7 +155,7 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
 
                             {/* Expanded Contract Detail */}
                             {expandedPlayerId === contract.player.id && (
-                                <tr>
+                                <tr key={`detail-${contract.player.id}`}>
                                     <td colSpan={8} className="px-6 py-4 bg-white/5">
                                         <div className="grid gap-4 md:grid-cols-2">
                                             {/* Contract Years */}
