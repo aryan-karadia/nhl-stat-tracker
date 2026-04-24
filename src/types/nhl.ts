@@ -132,6 +132,27 @@ export interface DraftPick {
   projection: DraftProjection | null;
 }
 
+// ---- Prospects & Scouting ----
+export interface ProspectScoutingReport {
+  summary: string;
+  strengths: string[];
+  developmentAreas: string[];
+  sourceNotes: string[];
+  confidence: "low" | "medium" | "high";
+}
+
+export interface Prospect {
+  id: string;
+  teamAbbrev: string;
+  fullName: string;
+  position: string;
+  age: number;
+  currentTeam: string;
+  league: string;
+  draftInfo?: string;
+  report: ProspectScoutingReport;
+}
+
 // ---- Team Stats (Edge Stats) ----
 export interface TeamStat {
   name: string;

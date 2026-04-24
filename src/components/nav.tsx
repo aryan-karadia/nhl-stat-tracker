@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { DollarSign, FileText, Trophy } from "lucide-react";
+import { DollarSign, FileText, Telescope, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TeamSwitcher } from "@/components/team-switcher";
 import { useTeam } from "@/context/team-context";
@@ -12,6 +12,7 @@ const NAV_ITEMS = [
     { href: "/", label: "Standings", icon: Trophy },
     { href: "/salary-cap", label: "Salary Cap", icon: DollarSign },
     { href: "/draft-picks", label: "Draft Picks", icon: FileText },
+    { href: "/prospect-pool", label: "Prospect Pool", icon: Telescope },
 ];
 
 export function Nav() {

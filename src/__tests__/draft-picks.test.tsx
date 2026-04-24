@@ -2,8 +2,13 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { DraftPicksPageClient } from "@/app/draft-picks/client";
+import { getTeamDraftPicks } from "@/lib/draft-api";
+
+jest.mock("@/lib/draft-api", () => ({
+    getTeamDraftPicks: jest.fn(),
+}));
 
 // Mock useTeam hook
 jest.mock("@/context/team-context", () => ({
@@ -15,11 +20,52 @@ jest.mock("@/context/team-context", () => ({
     }),
 }));
 
+const mockedGetTeamDraftPicks = getTeamDraftPicks as jest.MockedFunction<typeof getTeamDraftPicks>;
+
+const SAMPLE_PICKS = [
+    {
+        year: 2025,
+        round: 1,
+        overallPick: 5,
+        teamAbbrev: "TOR",
+        originalTeamAbbrev: "BOS",
+        isOwnPick: false,
+        projection: {
+            playerName: "Matthew Schaefer",
+            position: "D",
+            currentTeam: "Erie Otters",
+            league: "OHL",
+            scoutingReport: "Elite skating defenseman with transition upside.",
+            sources: ["The Athletic", "FC Hockey"],
+        },
+    },
+    {
+        year: 2025,
+        round: 2,
+        overallPick: 37,
+        teamAbbrev: "TOR",
+        originalTeamAbbrev: "TOR",
+        isOwnPick: true,
+        projection: null,
+    },
+];
+
 describe("DraftPicksPageClient", () => {
-    it("renders the draft picks page title", () => {
+    beforeEach(() => {
+        mockedGetTeamDraftPicks.mockResolvedValue(SAMPLE_PICKS);
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it("renders the draft picks page title", async () => {
         render(<DraftPicksPageClient />);
         expect(screen.getByText("Draft Picks")).toBeInTheDocument();
         expect(screen.getByText(/Toronto Maple Leafs draft picks/i)).toBeInTheDocument();
+        await waitFor(() => {
+            expect(mockedGetTeamDraftPicks).toHaveBeenCalledWith("TOR", 2025);
+        });
     });
 
     it("renders year tabs", () => {
@@ -29,66 +75,77 @@ describe("DraftPicksPageClient", () => {
         expect(screen.getByText("2027 Draft")).toBeInTheDocument();
     });
 
-    it("changes active year on tab click", () => {
+    it("changes active year on tab click", async () => {
         render(<DraftPicksPageClient />);
         const tab2026 = screen.getByText("2026 Draft");
         fireEvent.click(tab2026);
 
         // The active year tab should have the team-primary background (check via style)
         expect(tab2026).toHaveStyle("background-color: var(--team-primary)");
+
+        await waitFor(() => {
+            expect(mockedGetTeamDraftPicks).toHaveBeenCalledWith("TOR", 2026);
+        });
     });
 
-    it("renders at least one pick with overall number when 2025 is selected", () => {
+    it("renders at least one pick with overall number when 2025 is selected", async () => {
         render(<DraftPicksPageClient />);
-        // Round 1 pick should always have an overall number in 2025 mock
-        expect(screen.getAllByText(/#\d+ overall/i).length).toBeGreaterThan(0);
+        await waitFor(() => {
+            expect(screen.getAllByText(/#\d+ overall/i).length).toBeGreaterThan(0);
+        });
     });
 
-    it("renders 'Pick position TBD' for future years (2026/2027)", () => {
+    it("renders 'Pick position TBD' for future years (2026/2027)", async () => {
+        mockedGetTeamDraftPicks
+            .mockResolvedValueOnce(SAMPLE_PICKS)
+            .mockResolvedValueOnce([
+            {
+                ...SAMPLE_PICKS[0],
+                year: 2026,
+                overallPick: null,
+            },
+        ]);
+
         render(<DraftPicksPageClient />);
         fireEvent.click(screen.getByText("2026 Draft"));
-        expect(screen.getAllByText("Pick position TBD").length).toBeGreaterThan(0);
+
+        await waitFor(() => {
+            expect(screen.getAllByText("Pick position TBD").length).toBeGreaterThan(0);
+        });
     });
 
     it("displays traded pick indicator if pick is not own", async () => {
-        const randomSpy = jest.spyOn(Math, "random").mockReturnValue(0.8);
-        try {
-            render(<DraftPicksPageClient />);
-            // Use a function matcher to handle text split across nodes by the icon
+        render(<DraftPicksPageClient />);
+        await waitFor(() => {
             expect(screen.getByText((content) => content.includes("Via"))).toBeInTheDocument();
-        } finally {
-            randomSpy.mockRestore();
-        }
+        });
     });
 
-    it("renders projected player card when projection exists", () => {
-        // Mock Math.random to ensure pick #1 which has James Chicken projection
-        const randomSpy = jest.spyOn(Math, "random").mockReturnValue(0);
-        try {
-            render(<DraftPicksPageClient />);
-            // With basePick = 1, we get James Chicken projection
-            expect(screen.getByText("James Chicken")).toBeInTheDocument();
+    it("renders projected player card when projection exists", async () => {
+        render(<DraftPicksPageClient />);
 
-            // Verify the projection card content is rendered
-            expect(screen.getByText(/Kingston Frontenacs/i)).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText("Matthew Schaefer")).toBeInTheDocument();
+            expect(screen.getByText(/Erie Otters/i)).toBeInTheDocument();
             expect(screen.getByText(/Sources:/i)).toBeInTheDocument();
-        } finally {
-            randomSpy.mockRestore();
-        }
+        });
     });
-    it("renders scouting report and sources in projection card", () => {
-        const randomSpy = jest.spyOn(Math, "random").mockReturnValue(0);
-        try {
-            render(<DraftPicksPageClient />);
-            // Projections should have content that resembles a scouting report
-            // Based on MOCK_PROJECTIONS, basePick 1 gives James Chicken report
-            const anyScoutingText = screen.getByText(/Exceptional two-way center/i);
-            expect(anyScoutingText).toBeInTheDocument();
 
-            const sources = screen.getAllByText(/Sources:/i);
-            expect(sources.length).toBeGreaterThan(0);
-        } finally {
-            randomSpy.mockRestore();
-        }
+    it("renders scouting report and sources in projection card", async () => {
+        render(<DraftPicksPageClient />);
+
+        await waitFor(() => {
+            expect(screen.getByText(/Elite skating defenseman/i)).toBeInTheDocument();
+            expect(screen.getAllByText(/Sources:/i).length).toBeGreaterThan(0);
+        });
+    });
+
+    it("shows an error when API request fails", async () => {
+        mockedGetTeamDraftPicks.mockRejectedValueOnce(new Error("network failure"));
+        render(<DraftPicksPageClient />);
+
+        await waitFor(() => {
+            expect(screen.getByText(/Unable to load draft picks right now/i)).toBeInTheDocument();
+        });
     });
 });

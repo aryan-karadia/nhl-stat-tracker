@@ -20,6 +20,11 @@ NHL Stat Tracker is a web application for real-time standings, salary cap analyt
 - Synthesized scouting reports for top prospects.
 - Tracking for pick ownership and trade history.
 
+### Prospect Pool & Scouting
+- Team prospect pool view with per-player scouting snapshots.
+- Structured strengths and development areas for each prospect.
+- Mock and live scraper support through the normalized data layer.
+
 ### Dynamic Branding
 - Global theming system that swaps colors based on the chosen team.
 - Support for alternate jersey color schemes.
@@ -68,6 +73,42 @@ See the full [Feature Roadmap](ROADMAP.md) for more details.
 2. Install dependencies: `pnpm install`
 3. Start development: `pnpm dev`
 4. Run tests: `pnpm test`
+
+---
+
+## Data Sources
+
+The app now uses a normalized source resolver for salary, draft, and prospect data with three modes:
+
+- `mock`: always use local deterministic mock data
+- `live`: require live ingestion, throw if unavailable
+- `auto`: try live first, then fall back to mock
+
+### Mode Env Vars
+
+- `NEXT_PUBLIC_SALARY_DATA_MODE`
+- `NEXT_PUBLIC_DRAFT_DATA_MODE`
+- `NEXT_PUBLIC_PROSPECTS_DATA_MODE`
+
+### Live Scraper URL Templates
+
+Set these when you want the built-in scraper logic to ingest an HTML table source:
+
+- `NEXT_PUBLIC_SALARY_LIVE_URL_TEMPLATE` (supports `{team}`)
+- `NEXT_PUBLIC_DRAFT_LIVE_URL_TEMPLATE` (supports `{team}` and `{year}`)
+- `NEXT_PUBLIC_PROSPECTS_LIVE_URL_TEMPLATE` (supports `{team}`)
+
+Examples:
+
+- `NEXT_PUBLIC_SALARY_LIVE_URL_TEMPLATE=https://example.com/nhl/{team}/cap`
+- `NEXT_PUBLIC_DRAFT_LIVE_URL_TEMPLATE=https://example.com/nhl/{year}/mock-draft/{team}`
+- `NEXT_PUBLIC_PROSPECTS_LIVE_URL_TEMPLATE=https://example.com/nhl/{team}/prospects`
+
+Important notes:
+
+- These scrapers are intentionally lightweight and depend on table structure stability.
+- If the source layout changes, `auto` mode falls back to mock data.
+- Always confirm source terms of use before scraping.
 
 ---
 

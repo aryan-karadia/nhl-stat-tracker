@@ -1,121 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTeam } from "@/context/team-context";
 import { DraftPick, DraftProjection } from "@/types/nhl";
 import { cn } from "@/lib/utils";
 import { FileText, ArrowRightLeft, User, Star } from "lucide-react";
-
-// ============================================================
-// Mock draft projections with source attribution
-// In production, these would come from an LLM-powered API
-// ============================================================
-
-const MOCK_PROJECTIONS: Record<string, DraftProjection> = {
-    "1": {
-        playerName: "James Chicken",
-        position: "C",
-        currentTeam: "Kingston Frontenacs",
-        league: "OHL",
-        scoutingReport: "Exceptional two-way center with elite hockey IQ. Projects as a franchise-altering talent with complete skill package.",
-        sources: ["Bob McKenzie (TSN)", "Scott Wheeler (The Athletic)", "Daily Faceoff Mock Draft"],
-    },
-    "2": {
-        playerName: "Michael Misa",
-        position: "C",
-        currentTeam: "Saginaw Spirit",
-        league: "OHL",
-        scoutingReport: "Dynamic offensive center with exceptional speed and shooting ability. Game-breaking talent with a pro-ready shot.",
-        sources: ["Craig Button (TSN)", "EliteProspects 2025 Draft Guide"],
-    },
-    "3": {
-        playerName: "Porter Martone",
-        position: "RW",
-        currentTeam: "Brampton Steelheads",
-        league: "OHL",
-        scoutingReport: "Power forward with soft hands and a mean streak. Physical presence combined with high-end skill.",
-        sources: ["Corey Pronman (The Athletic)", "Steve Dangle (YouTube)"],
-    },
-    "5": {
-        playerName: "Matthew Schaefer",
-        position: "D",
-        currentTeam: "Erie Otters",
-        league: "OHL",
-        scoutingReport: "Elite skating defenseman who can quarterback a power play. Smooth transition game and excellent decision-making.",
-        sources: ["Wheeler (The Athletic)", "McKeen's Hockey Draft Rankings"],
-    },
-    "10": {
-        playerName: "Caleb Desnoyers",
-        position: "C",
-        currentTeam: "Moncton Wildcats",
-        league: "QMJHL",
-        scoutingReport: "Smart two-way center with excellent defensive instincts. Strong board play and faceoff skills.",
-        sources: ["FC Hockey Scouting", "NHL Central Scouting Midterm Rankings"],
-    },
-    "15": {
-        playerName: "Lucas Pettersson",
-        position: "LW",
-        currentTeam: "Luleå HF",
-        league: "SHL",
-        scoutingReport: "Skilled Swedish winger with great vision and playmaking ability. Smooth skater with a deceptive release.",
-        sources: ["EliteProspects", "Dobber Prospects"],
-    },
-    "20": {
-        playerName: "Josh Pikka",
-        position: "D",
-        currentTeam: "Oulun Kärpät",
-        league: "Liiga",
-        scoutingReport: "Two-way defenseman with excellent mobility and a strong first pass. Reliable in all three zones.",
-        sources: ["FC Hockey", "Finnish Hockey Scouting Report"],
-    },
-    "25": {
-        playerName: "Emil Hemming",
-        position: "RW",
-        currentTeam: "Jokipojat",
-        league: "Mestis",
-        scoutingReport: "Big winger with a heavy shot and good net-front presence. Projects as a middle-six forward with physicality.",
-        sources: ["EliteProspects", "Recruit Scouting"],
-    },
-};
-
-function generateMockPicks(teamAbbrev: string, year: number): DraftPick[] {
-    // Generate 2-4 picks per team per year
-    const basePick = Math.floor(Math.random() * 28) + 1;
-    const picks: DraftPick[] = [];
-    const tradedFromTeams = ["TOR", "MTL", "BOS", "NYR", "VAN", "EDM", "CGY", "CHI"];
-
-    // Round 1
-    const rd1Pick = basePick;
-    const isTraded = Math.random() > 0.7;
-    picks.push({
-        year,
-        round: 1,
-        overallPick: year <= 2025 ? rd1Pick : null,
-        teamAbbrev,
-        originalTeamAbbrev: isTraded ? tradedFromTeams[Math.floor(Math.random() * tradedFromTeams.length)] : teamAbbrev,
-        isOwnPick: !isTraded,
-        projection: MOCK_PROJECTIONS[rd1Pick.toString()] || null,
-    });
-
-    // Round 2-7 (some rounds may be missing due to trades)
-    for (let round = 2; round <= 7; round++) {
-        if (Math.random() > 0.3) {
-            const overall = year <= 2025 ? (round - 1) * 32 + basePick : null;
-            const traded = Math.random() > 0.8;
-            picks.push({
-                year,
-                round,
-                overallPick: overall,
-                teamAbbrev,
-                originalTeamAbbrev: traded ? tradedFromTeams[Math.floor(Math.random() * tradedFromTeams.length)] : teamAbbrev,
-                isOwnPick: !traded,
-                projection: null,
-            });
-        }
-    }
-
-    return picks;
-}
+import { getTeamDraftPicks } from "@/lib/draft-api";
 
 function ProjectedPlayerCard({ projection }: { projection: DraftProjection }) {
     return (
@@ -154,9 +44,41 @@ function ProjectedPlayerCard({ projection }: { projection: DraftProjection }) {
 export function DraftPicksPageClient() {
     const { selectedTeam } = useTeam();
     const [activeYear, setActiveYear] = useState(2025);
+    const [picks, setPicks] = useState<DraftPick[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const years = [2025, 2026, 2027];
 
-    const picks = generateMockPicks(selectedTeam.abbreviation, activeYear);
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadDraftPicks() {
+            setLoading(true);
+            setError(null);
+
+            try {
+                const data = await getTeamDraftPicks(selectedTeam.abbreviation, activeYear);
+                if (!cancelled) {
+                    setPicks(data);
+                }
+            } catch (err) {
+                console.error("Failed to load draft picks:", err);
+                if (!cancelled) {
+                    setError("Unable to load draft picks right now. Please try again later.");
+                }
+            } finally {
+                if (!cancelled) {
+                    setLoading(false);
+                }
+            }
+        }
+
+        loadDraftPicks();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [selectedTeam.abbreviation, activeYear]);
 
     return (
         <div className="space-y-8">
@@ -166,7 +88,7 @@ export function DraftPicksPageClient() {
                     {selectedTeam.name} draft picks with projected selections
                 </p>
                 <p className="text-xs text-yellow-400/60 mt-2">
-                    ⚠ Projections are generated via AI analysis of public draft rankings and mock drafts.
+                    ⚠ Projections are synthesized from public scouting sources and should be treated as directional.
                 </p>
             </div>
 
@@ -193,8 +115,22 @@ export function DraftPicksPageClient() {
                 ))}
             </div>
 
+            {error && (
+                <div className="rounded-xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-200">
+                    {error}
+                </div>
+            )}
+
             {/* Picks List */}
             <div className="space-y-3">
+                {loading && (
+                    <div className="space-y-3">
+                        <div className="h-20 rounded-xl bg-white/5 animate-pulse" />
+                        <div className="h-20 rounded-xl bg-white/5 animate-pulse" />
+                        <div className="h-20 rounded-xl bg-white/5 animate-pulse" />
+                    </div>
+                )}
+
                 {picks.map((pick, idx) => (
                     <div
                         key={idx}
@@ -239,7 +175,7 @@ export function DraftPicksPageClient() {
                     </div>
                 ))}
 
-                {picks.length === 0 && (
+                {!loading && picks.length === 0 && (
                     <div className="text-center py-12 text-gray-500">
                         <FileText className="h-8 w-8 mx-auto mb-3 opacity-40" />
                         <p>No draft picks found for {activeYear}</p>
