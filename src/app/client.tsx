@@ -94,11 +94,14 @@ export function StandingsPageClient({ standings }: StandingsPageClientProps) {
     }, [selectedTeam.abbreviation, standings]);
 
     return (
-        <div className="space-y-8">
-            {/* Header */}
-            <div>
-                <h2 className="text-2xl font-bold">Standings</h2>
-                <p className="text-sm text-gray-400 mt-1">Current NHL standings with projected draft picks and playoff positions</p>
+        <div className="space-y-8 page-reveal">
+            <div className="page-heading">
+                <div>
+                    <p className="eyebrow text-[var(--team-secondary)]">NHL / LEAGUE VIEW</p>
+                    <h2 className="font-display text-4xl font-bold tracking-tight sm:text-5xl">Standings<span className="text-[var(--team-secondary)]">.</span></h2>
+                    <p className="mt-2 max-w-xl text-sm text-slate-400">A live read on the race for the postseason, projected draft position, and the teams setting the pace.</p>
+                </div>
+                <div className="season-stamp"><span>REGULAR SEASON</span><strong>25—26</strong></div>
             </div>
 
             {/* Team Summary Cards */}
