@@ -170,27 +170,15 @@ export function TeamRoster({ roster }: TeamRosterProps) {
     return (
         <div className="flex flex-col gap-8">
             <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-gray-400">
-                <span className="font-semibold text-gray-200">Projected lines sheet</span>
-                <span className="ml-2">Players are grouped from the official NHL roster order; game-to-game line assignments may differ.</span>
+                <span className="font-semibold text-gray-200">Current roster</span>
+                <span className="ml-2">The official NHL roster does not include projected line combinations, so players are grouped by position.</span>
             </div>
 
             <div className="flex flex-col gap-6">
-                <h3 className="eyebrow text-xs font-bold text-gray-300">Forwards</h3>
-                {[0, 1, 2, 3].map((line) => {
-                    const players = forwards.slice(line * 3, line * 3 + 3);
-                    return players.length > 0 ? (
-                        <Section key={line} title={`Line ${line + 1}`} players={players} columns="grid-cols-1 md:grid-cols-3" />
-                    ) : null;
-                })}
+                <Section title="Forwards" players={forwards} columns="grid-cols-1 md:grid-cols-3" />
             </div>
             <div className="flex flex-col gap-6">
-                <h3 className="eyebrow text-xs font-bold text-gray-300">Defense pairings</h3>
-                {[0, 1, 2].map((pair) => {
-                    const players = defensemen.slice(pair * 2, pair * 2 + 2);
-                    return players.length > 0 ? (
-                        <Section key={pair} title={`Pair ${pair + 1}`} players={players} columns="grid-cols-1 md:grid-cols-2" />
-                    ) : null;
-                })}
+                <Section title="Defensemen (not pairings)" players={defensemen} columns="grid-cols-1 md:grid-cols-2" />
             </div>
             <GoalieTandem goalies={goalies.slice(0, 3)} />
         </div>

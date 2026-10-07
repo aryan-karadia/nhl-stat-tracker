@@ -13,6 +13,7 @@ NHL Stat Tracker is a web application for real-time standings, salary cap analyt
 ### Team Roster
 - Fetches the selected team's current roster from the official NHL API.
 - Provides expandable player profiles with biographical details and current-season stats.
+- Does not infer line combinations from roster order; the NHL roster endpoint does not publish projected lines.
 - Does not claim salary, contract, or trade-clause data that the official NHL API does not expose.
 
 ### Draft Projections
