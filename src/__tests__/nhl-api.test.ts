@@ -142,6 +142,25 @@ describe("getPowerRanking", () => {
     expect(result.powerRankScore).toBeGreaterThanOrEqual(70);
   });
 
+  it("normalizes the ranking to actual games when fewer than 10 have been played", async () => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        standings: [makeStandingsEntry({
+          gamesPlayed: 5,
+          l10Wins: 4,
+          l10Losses: 1,
+          l10OtLosses: 0,
+        })],
+      }),
+    });
+
+    const result = await getPowerRanking("TOR");
+    expect(result.last10PointsPctg).toBe(80);
+    expect(result.powerRankScore).toBe(80);
+    expect(result.trend).toBe("hot");
+  });
+
   it("returns cold trend for poor L10 record", async () => {
     mockFetch.mockResolvedValue({
       ok: true,

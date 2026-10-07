@@ -35,8 +35,8 @@ NHL Stat Tracker is a web application for real-time standings, salary cap analyt
 
 - Framework: Next.js 16 (App Router, Server Components)
 - Language: TypeScript
-- Styling: Tailwind CSS 4 and CSS Variables
-- UI Components: shadcn/ui
+- Styling: Tailwind CSS 4 with CSS-first `@theme` tokens
+- UI Components: Tailwind utility classes and reusable React components
 - State Management: React Context
 - Testing: Jest and React Testing Library (86 tests)
 - API: Official NHL Web API

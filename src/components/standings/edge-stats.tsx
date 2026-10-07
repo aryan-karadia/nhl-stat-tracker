@@ -59,7 +59,7 @@ export function EdgeStats({ stats }: EdgeStatsProps) {
                         Top Stats <span className="text-green-400/60">(Top 10)</span>
                     </h3>
                 </div>
-                <div className="space-y-2">
+                <div className="flex flex-col gap-2">
                     {stats.topStats.length > 0 ? (
                         stats.topStats.map((stat) => (
                             <StatBadge key={stat.name} stat={stat} type="top" />
@@ -80,7 +80,7 @@ export function EdgeStats({ stats }: EdgeStatsProps) {
                         Weaknesses <span className="text-red-400/60">(Bottom 5)</span>
                     </h3>
                 </div>
-                <div className="space-y-2">
+                <div className="flex flex-col gap-2">
                     {stats.worstStats.length > 0 ? (
                         stats.worstStats.map((stat) => (
                             <StatBadge key={stat.name} stat={stat} type="worst" />

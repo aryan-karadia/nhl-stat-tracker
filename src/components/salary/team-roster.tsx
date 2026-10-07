@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { NHLPlayerLanding, NHLRosterPlayer } from "@/lib/nhl-api";
+import { cn } from "@/lib/utils";
 
 interface TeamRosterProps {
     roster: NHLRosterPlayer[];
@@ -152,7 +153,7 @@ function Section({
                 <h3 className="eyebrow text-xs font-bold text-gray-300">{title}</h3>
                 <div className="h-px flex-1 bg-white/10" />
             </div>
-            <div className={`grid gap-3 ${columns}`}>
+            <div className={cn("grid gap-3", columns)}>
                 {players.map((player, index) => (
                     <PlayerCard key={player.id} player={player} label={labels?.[index]} />
                 ))}
@@ -167,13 +168,13 @@ export function TeamRoster({ roster }: TeamRosterProps) {
     const goalies = useMemo(() => roster.filter((player) => player.positionCode === "G"), [roster]);
 
     return (
-        <div className="space-y-8">
+        <div className="flex flex-col gap-8">
             <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-gray-400">
                 <span className="font-semibold text-gray-200">Projected lines sheet</span>
                 <span className="ml-2">Players are grouped from the official NHL roster order; game-to-game line assignments may differ.</span>
             </div>
 
-            <div className="space-y-6">
+            <div className="flex flex-col gap-6">
                 <h3 className="eyebrow text-xs font-bold text-gray-300">Forwards</h3>
                 {[0, 1, 2, 3].map((line) => {
                     const players = forwards.slice(line * 3, line * 3 + 3);
@@ -182,7 +183,7 @@ export function TeamRoster({ roster }: TeamRosterProps) {
                     ) : null;
                 })}
             </div>
-            <div className="space-y-6">
+            <div className="flex flex-col gap-6">
                 <h3 className="eyebrow text-xs font-bold text-gray-300">Defense pairings</h3>
                 {[0, 1, 2].map((pair) => {
                     const players = defensemen.slice(pair * 2, pair * 2 + 2);

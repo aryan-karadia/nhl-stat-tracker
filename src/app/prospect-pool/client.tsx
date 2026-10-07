@@ -5,6 +5,7 @@ import { useTeam } from "@/context/team-context";
 import { Prospect } from "@/types/nhl";
 import { getProspectPool } from "@/lib/prospects-api";
 import { ShieldCheck, TrendingUp } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function ProspectPoolPageClient() {
   const { selectedTeam } = useTeam();
@@ -44,7 +45,7 @@ export function ProspectPoolPageClient() {
   }, [selectedTeam.abbreviation]);
 
   return (
-    <div className="space-y-8">
+    <div className="flex flex-col gap-8">
       <div>
         <h2 className="text-2xl font-bold">Prospect Pool</h2>
         <p className="text-sm text-gray-400 mt-1">
@@ -62,10 +63,10 @@ export function ProspectPoolPageClient() {
       )}
 
       {loading && (
-        <div className="space-y-3">
-          <div className="h-24 rounded-xl bg-white/5 animate-pulse" />
-          <div className="h-24 rounded-xl bg-white/5 animate-pulse" />
-          <div className="h-24 rounded-xl bg-white/5 animate-pulse" />
+        <div className="flex flex-col gap-3">
+          <Skeleton className="h-24 rounded-xl" />
+          <Skeleton className="h-24 rounded-xl" />
+          <Skeleton className="h-24 rounded-xl" />
         </div>
       )}
 
@@ -105,7 +106,7 @@ export function ProspectPoolPageClient() {
                   <TrendingUp className="h-3.5 w-3.5" />
                   Strengths
                 </div>
-                <ul className="space-y-1 text-xs text-emerald-100/90">
+                <ul className="flex flex-col gap-1 text-xs text-emerald-100/90">
                   {prospect.report.strengths.length > 0 ? (
                     prospect.report.strengths.map((strength) => <li key={strength}>• {strength}</li>)
                   ) : (
@@ -119,7 +120,7 @@ export function ProspectPoolPageClient() {
                   <ShieldCheck className="h-3.5 w-3.5" />
                   Development Areas
                 </div>
-                <ul className="space-y-1 text-xs text-amber-100/90">
+                <ul className="flex flex-col gap-1 text-xs text-amber-100/90">
                   {prospect.report.developmentAreas.length > 0 ? (
                     prospect.report.developmentAreas.map((area) => <li key={area}>• {area}</li>)
                   ) : (

@@ -2,11 +2,13 @@
 
 import React from "react";
 import { useMemo } from "react";
-import { PowerRanking, Standing, TeamStatsCollection } from "@/types/nhl";
+import { Standing, TeamStatsCollection } from "@/types/nhl";
 import { useTeam } from "@/context/team-context";
 import { StandingsTable } from "@/components/standings/standings-table";
 import { PowerRankingCard } from "@/components/standings/power-ranking";
 import { EdgeStats } from "@/components/standings/edge-stats";
+import { cn } from "@/lib/utils";
+import { calculatePowerRanking } from "@/lib/power-ranking";
 
 interface StandingsPageClientProps {
     standings: Standing[];
@@ -71,10 +73,6 @@ export function StandingsPageClient({ standings }: StandingsPageClientProps) {
             },
         ];
 
-        const l10Points = team.l10Wins * 2 + team.l10OtLosses;
-        const l10PointsPctg = l10Points / 20;
-        const powerScore = Math.round(l10PointsPctg * 100);
-
         return {
             teamStats: {
                 teamAbbrev: selectedTeam.abbreviation,
@@ -82,19 +80,12 @@ export function StandingsPageClient({ standings }: StandingsPageClientProps) {
                 topStats: stats.filter((s) => s.rank <= 10),
                 worstStats: stats.filter((s) => s.rank >= 28),
             } as TeamStatsCollection,
-            powerRanking: {
-                teamAbbrev: selectedTeam.abbreviation,
-                last10Games: [],
-                last10Record: `${team.l10Wins}-${team.l10Losses}-${team.l10OtLosses}`,
-                last10PointsPctg: parseFloat((l10PointsPctg * 100).toFixed(1)),
-                powerRankScore: powerScore,
-                trend: l10PointsPctg >= 0.7 ? "hot" : l10PointsPctg >= 0.5 ? "warm" : "cold",
-            } as PowerRanking,
+            powerRanking: calculatePowerRanking(team),
         };
     }, [selectedTeam.abbreviation, standings]);
 
     return (
-        <div className="space-y-8 page-reveal">
+        <div className="flex flex-col gap-8 page-reveal">
             <div className="page-heading">
                 <div>
                     <p className="eyebrow text-[var(--team-secondary)]">NHL / LEAGUE VIEW</p>
@@ -139,7 +130,11 @@ export function StandingsPageClient({ standings }: StandingsPageClientProps) {
                                 </div>
                                 <div>
                                     <div className="text-xs text-gray-500 mb-1">Goal Diff</div>
-                                    <div className={`text-xl font-bold font-mono ${team.goalDiff > 0 ? "text-green-400" : team.goalDiff < 0 ? "text-red-400" : ""}`}>
+                                    <div className={cn(
+                                        "text-xl font-bold font-mono",
+                                        team.goalDiff > 0 && "text-green-400",
+                                        team.goalDiff < 0 && "text-red-400",
+                                    )}>
                                         {team.goalDiff > 0 ? `+${team.goalDiff}` : team.goalDiff}
                                     </div>
                                 </div>

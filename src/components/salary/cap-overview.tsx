@@ -1,6 +1,7 @@
 "use client";
 
 import { TeamCapSummary } from "@/types/nhl";
+import { cn } from "@/lib/utils";
 
 interface CapOverviewProps {
     summary: TeamCapSummary;
@@ -51,7 +52,10 @@ export function CapOverview({ summary }: CapOverviewProps) {
                 </div>
                 <div>
                     <div className="text-xs text-gray-500 mb-1">Cap Space</div>
-                    <div className={`text-lg font-bold font-mono ${isOverCap ? "text-red-400" : "text-green-400"}`}>
+                    <div className={cn(
+                        "text-lg font-bold font-mono",
+                        isOverCap ? "text-red-400" : "text-green-400",
+                    )}>
                         {isOverCap ? "-" : ""}{formatMoney(Math.abs(summary.capSpace))}
                     </div>
                 </div>

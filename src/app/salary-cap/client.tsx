@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTeam } from "@/context/team-context";
 import { NHLRosterPlayer, NHLRosterResponse } from "@/lib/nhl-api";
 import { TeamRoster } from "@/components/salary/team-roster";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function SalaryCapPageClient() {
     const { selectedTeam } = useTeam();
@@ -42,17 +43,17 @@ export function SalaryCapPageClient() {
 
     if (loading) {
         return (
-            <div className="space-y-6">
-                <div className="h-8 w-48 rounded-lg bg-white/10 animate-pulse" />
-                <div className="h-32 rounded-xl bg-white/5 animate-pulse" />
-                <div className="h-96 rounded-xl bg-white/5 animate-pulse" />
+            <div className="flex flex-col gap-6">
+                <Skeleton className="h-8 w-48 rounded-lg" />
+                <Skeleton className="h-32 rounded-xl" />
+                <Skeleton className="h-96 rounded-xl" />
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="space-y-6">
+            <div className="flex flex-col gap-6">
                 <div>
                     <h2 className="text-2xl font-bold">Team Roster</h2>
                     <p className="text-sm text-gray-400 mt-1">
@@ -85,7 +86,7 @@ export function SalaryCapPageClient() {
     }
 
     return (
-        <div className="space-y-8">
+        <div className="flex flex-col gap-8">
             <div>
                 <h2 className="text-2xl font-bold">Team Roster</h2>
                 <p className="text-sm text-gray-400 mt-1">

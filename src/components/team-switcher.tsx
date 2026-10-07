@@ -132,8 +132,8 @@ export function TeamSwitcher() {
                         role="dialog"
                         aria-labelledby="team-switcher-trigger"
                         aria-modal="true"
-                        className="absolute left-0 top-full z-50 mt-2 w-80 rounded-xl border border-white/10 bg-gray-900/95 
-                        shadow-2xl backdrop-blur-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+                        className="absolute left-0 top-full z-50 mt-2 w-80 rounded-xl border border-white/10 bg-gray-900/95
+                        shadow-2xl backdrop-blur-xl overflow-hidden animate-dropdown-in"
                     >
                         {/* Search */}
                         <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">

@@ -164,7 +164,7 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                                             {/* Contract Years */}
                                             <div>
                                                 <h4 className="text-xs font-bold text-gray-400 uppercase mb-2">Contract Breakdown</h4>
-                                                <div className="space-y-1">
+                                                <div className="flex flex-col gap-1">
                                                     {contract.contractYears.map((year) => (
                                                         <div key={year.season} className="flex items-center justify-between text-xs">
                                                             <span className="font-mono text-gray-400">{year.season}</span>

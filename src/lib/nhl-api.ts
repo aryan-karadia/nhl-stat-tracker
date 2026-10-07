@@ -1,4 +1,5 @@
 import { Standing, TeamStat, TeamStatsCollection, PowerRanking } from "@/types/nhl";
+import { calculatePowerRanking } from "@/lib/power-ranking";
 
 const NHL_API_BASE = "https://api-web.nhle.com/v1";
 
@@ -201,26 +202,7 @@ export async function getPowerRanking(teamAbbrev: string): Promise<PowerRanking>
   const team = standings.find((s) => s.teamAbbrev === teamAbbrev);
   if (!team) throw new Error(`Team ${teamAbbrev} not found`);
 
-  const l10Record = `${team.l10Wins}-${team.l10Losses}-${team.l10OtLosses}`;
-  const l10Points = team.l10Wins * 2 + team.l10OtLosses;
-  const l10PointsPctg = l10Points / 20; // max 20 points in 10 games
-
-  // Power rank score: weighted combination
-  const powerRankScore = Math.round(l10PointsPctg * 100);
-
-  let trend: "hot" | "warm" | "cold";
-  if (l10PointsPctg >= 0.7) trend = "hot";
-  else if (l10PointsPctg >= 0.5) trend = "warm";
-  else trend = "cold";
-
-  return {
-    teamAbbrev,
-    last10Games: [], // Would need schedule API for game-by-game
-    last10Record: l10Record,
-    last10PointsPctg: parseFloat((l10PointsPctg * 100).toFixed(1)),
-    powerRankScore,
-    trend,
-  };
+  return calculatePowerRanking(team);
 }
 
 // ============================================================

@@ -6,6 +6,7 @@ import { DraftPick, DraftProjection } from "@/types/nhl";
 import { cn } from "@/lib/utils";
 import { FileText, ArrowRightLeft, User, Star } from "lucide-react";
 import { getTeamDraftPicks } from "@/lib/draft-api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function ProjectedPlayerCard({ projection }: { projection: DraftProjection }) {
     return (
@@ -81,7 +82,7 @@ export function DraftPicksPageClient() {
     }, [selectedTeam.abbreviation, activeYear]);
 
     return (
-        <div className="space-y-8">
+        <div className="flex flex-col gap-8">
             <div>
                 <h2 className="text-2xl font-bold">Draft Picks</h2>
                 <p className="text-sm text-gray-400 mt-1">
@@ -122,12 +123,12 @@ export function DraftPicksPageClient() {
             )}
 
             {/* Picks List */}
-            <div className="space-y-3">
+            <div className="flex flex-col gap-3">
                 {loading && (
-                    <div className="space-y-3">
-                        <div className="h-20 rounded-xl bg-white/5 animate-pulse" />
-                        <div className="h-20 rounded-xl bg-white/5 animate-pulse" />
-                        <div className="h-20 rounded-xl bg-white/5 animate-pulse" />
+                    <div className="flex flex-col gap-3">
+                        <Skeleton className="h-20 rounded-xl" />
+                        <Skeleton className="h-20 rounded-xl" />
+                        <Skeleton className="h-20 rounded-xl" />
                     </div>
                 )}
 
