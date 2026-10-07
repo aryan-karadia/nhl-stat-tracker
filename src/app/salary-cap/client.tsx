@@ -2,15 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useTeam } from "@/context/team-context";
-import { PlayerContract, TeamCapSummary } from "@/types/nhl";
-import { getPlayerContracts, getTeamCapSummary } from "@/lib/salary-api";
-import { CapOverview } from "@/components/salary/cap-overview";
-import { ContractsTable } from "@/components/salary/contracts-table";
+import { NHLRosterPlayer, NHLRosterResponse } from "@/lib/nhl-api";
+import { TeamRoster } from "@/components/salary/team-roster";
 
 export function SalaryCapPageClient() {
     const { selectedTeam } = useTeam();
-    const [contracts, setContracts] = useState<PlayerContract[]>([]);
-    const [capSummary, setCapSummary] = useState<TeamCapSummary | null>(null);
+    const [roster, setRoster] = useState<NHLRosterPlayer[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -21,18 +18,18 @@ export function SalaryCapPageClient() {
             setLoading(true);
             setError(null);
             try {
-                const [contractsData, capData] = await Promise.all([
-                    getPlayerContracts(selectedTeam.abbreviation),
-                    getTeamCapSummary(selectedTeam.abbreviation),
-                ]);
+                const response = await fetch(`/api/nhl/roster/${selectedTeam.abbreviation}`);
+                if (!response.ok) {
+                    throw new Error(`Roster request failed with ${response.status}`);
+                }
+                const rosterData = await response.json() as NHLRosterResponse;
                 if (!cancelled) {
-                    setContracts(contractsData);
-                    setCapSummary(capData);
+                    setRoster([...rosterData.forwards, ...rosterData.defensemen, ...rosterData.goalies]);
                 }
             } catch (err) {
-                console.error("Failed to fetch salary data:", err);
+                console.error("Failed to fetch NHL roster:", err);
                 if (!cancelled) {
-                    setError("Unable to load salary cap data. Please try again later.");
+                    setError("Unable to load the official NHL roster. Please try again later.");
                 }
             } finally {
                 if (!cancelled) setLoading(false);
@@ -57,9 +54,9 @@ export function SalaryCapPageClient() {
         return (
             <div className="space-y-6">
                 <div>
-                    <h2 className="text-2xl font-bold">Salary Cap</h2>
+                    <h2 className="text-2xl font-bold">Team Roster</h2>
                     <p className="text-sm text-gray-400 mt-1">
-                        {selectedTeam.name} salary cap breakdown and player contracts
+                        {selectedTeam.name} current roster and player profiles
                     </p>
                 </div>
                 <div className="rounded-xl border border-red-400/20 bg-red-500/10 p-6 backdrop-blur-sm">
@@ -90,17 +87,16 @@ export function SalaryCapPageClient() {
     return (
         <div className="space-y-8">
             <div>
-                <h2 className="text-2xl font-bold">Salary Cap</h2>
+                <h2 className="text-2xl font-bold">Team Roster</h2>
                 <p className="text-sm text-gray-400 mt-1">
-                    {selectedTeam.name} salary cap breakdown and player contracts
+                    {selectedTeam.name} current roster and player profiles
                 </p>
-                <p className="text-xs text-yellow-400/60 mt-2">
-                    ⚠ Contract data is currently mock data. Live data source coming soon.
+                <p className="text-xs text-gray-500 mt-2">
+                    Data provided by the official NHL API · click a player for more information
                 </p>
             </div>
 
-            {capSummary && <CapOverview summary={capSummary} />}
-            <ContractsTable contracts={contracts} />
+            <TeamRoster roster={roster} />
         </div>
     );
 }

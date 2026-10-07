@@ -10,10 +10,10 @@ NHL Stat Tracker is a web application for real-time standings, salary cap analyt
 - Includes power rankings based on the last 10 games.
 - Provides edge statistics highlighting league-wide strengths and weaknesses.
 
-### Salary Cap Management
-- Tracks team cap hits against the projected 2025-26 limit ($95M).
-- Detailed breakdown of player contracts, including AAV and term lengths.
-- Visibility into trade protection clauses (NMC/NTC).
+### Team Roster
+- Fetches the selected team's current roster from the official NHL API.
+- Provides expandable player profiles with biographical details and current-season stats.
+- Does not claim salary, contract, or trade-clause data that the official NHL API does not expose.
 
 ### Draft Projections
 - Projections for upcoming 2025, 2026, and 2027 drafts.
@@ -90,17 +90,15 @@ The app now uses a normalized source resolver for salary, draft, and prospect da
 - `NEXT_PUBLIC_DRAFT_DATA_MODE`
 - `NEXT_PUBLIC_PROSPECTS_DATA_MODE`
 
-### Live Scraper URL Templates
+### Live scraper URL templates
 
 Set these when you want the built-in scraper logic to ingest an HTML table source:
 
-- `NEXT_PUBLIC_SALARY_LIVE_URL_TEMPLATE` (supports `{team}`)
 - `NEXT_PUBLIC_DRAFT_LIVE_URL_TEMPLATE` (supports `{team}` and `{year}`)
 - `NEXT_PUBLIC_PROSPECTS_LIVE_URL_TEMPLATE` (supports `{team}`)
 
 Examples:
 
-- `NEXT_PUBLIC_SALARY_LIVE_URL_TEMPLATE=https://example.com/nhl/{team}/cap`
 - `NEXT_PUBLIC_DRAFT_LIVE_URL_TEMPLATE=https://example.com/nhl/{year}/mock-draft/{team}`
 - `NEXT_PUBLIC_PROSPECTS_LIVE_URL_TEMPLATE=https://example.com/nhl/{team}/prospects`
 
@@ -109,6 +107,8 @@ Important notes:
 - These scrapers are intentionally lightweight and depend on table structure stability.
 - If the source layout changes, `auto` mode falls back to mock data.
 - Always confirm source terms of use before scraping.
+
+The team roster page uses the official NHL Web API directly. No salary-cap `.env` variables are required. PuckPedia contract data is not used because its contract API requires separate access.
 
 ---
 

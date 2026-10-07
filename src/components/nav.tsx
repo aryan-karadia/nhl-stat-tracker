@@ -3,14 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { DollarSign, FileText, Telescope, Trophy, Activity } from "lucide-react";
+import { Users, FileText, Telescope, Trophy, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TeamSwitcher } from "@/components/team-switcher";
 import { useTeam } from "@/context/team-context";
 
 const NAV_ITEMS = [
     { href: "/", label: "Standings", icon: Trophy },
-    { href: "/salary-cap", label: "Salary Cap", icon: DollarSign },
+    { href: "/salary-cap", label: "Team Roster", icon: Users },
     { href: "/draft-picks", label: "Draft Picks", icon: FileText },
     { href: "/prospect-pool", label: "Prospect Pool", icon: Telescope },
 ];

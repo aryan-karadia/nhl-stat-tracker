@@ -261,16 +261,22 @@ export async function getDraftPicks(year: number): Promise<NHLDraftResponse["pic
 // Team Roster
 // ============================================================
 
-interface NHLRosterPlayer {
+export interface NHLRosterPlayer {
   id: number;
   headshot: string;
   firstName: { default: string };
   lastName: { default: string };
   positionCode: string;
   sweaterNumber: number;
+  shootsCatches?: string;
+  heightInInches?: number;
+  weightInPounds?: number;
+  birthDate?: string;
+  birthCity?: { default: string };
+  birthCountry?: string;
 }
 
-interface NHLRosterResponse {
+export interface NHLRosterResponse {
   forwards: NHLRosterPlayer[];
   defensemen: NHLRosterPlayer[];
   goalies: NHLRosterPlayer[];
@@ -279,6 +285,56 @@ interface NHLRosterResponse {
 export async function getTeamRoster(teamAbbrev: string): Promise<NHLRosterResponse> {
   const res = await fetch(`${NHL_API_BASE}/roster/${teamAbbrev}/current`, {
     next: { revalidate: 3600 },
+  });
+
+  if (!res.ok) throw new Error(`NHL API Error: ${res.status}`);
+  return res.json();
+}
+
+export interface NHLPlayerLanding {
+  id: number;
+  birthDate?: string;
+  birthCity?: { default: string };
+  birthCountry?: string;
+  heightInInches?: number;
+  weightInPounds?: number;
+  shootsCatches?: string;
+  positionCode?: string;
+  currentTeamAbbrev?: string;
+  featuredStats?: {
+    season?: number;
+    regularSeason?: {
+      subSeason?: {
+        gamesPlayed?: number;
+        goals?: number;
+        assists?: number;
+        points?: number;
+        wins?: number;
+        losses?: number;
+        otLosses?: number;
+        goalsAgainstAvg?: number;
+        savePctg?: number;
+        shutouts?: number;
+      };
+    };
+  };
+  careerTotals?: {
+    regularSeason?: {
+      goals?: number;
+      assists?: number;
+      gamesPlayed?: number;
+      gamesStarted?: number;
+      wins?: number;
+      goalsAgainstAvg?: number;
+      savePctg?: number;
+      shutouts?: number;
+    };
+  };
+}
+
+export async function getPlayerLanding(playerId: number): Promise<NHLPlayerLanding> {
+  const res = await fetch(`${NHL_API_BASE}/player/${playerId}/landing`, {
+    next: { revalidate: 86_400 },
   });
 
   if (!res.ok) throw new Error(`NHL API Error: ${res.status}`);
