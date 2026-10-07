@@ -1,9 +1,9 @@
 import { getEnvDataSourceMode, getEnvVar, resolveDataSource } from "@/lib/data-source";
-import { getDraftPicks } from "@/lib/nhl-api";
-import { DraftPick, DraftProjection } from "@/types/nhl";
+import { getDraftPicks, NHLDraftResponse } from "@/lib/nhl-api";
+import { DraftPick, DraftProjection, DraftedPlayer } from "@/types/nhl";
 import { extractTablesFromHtml, findTableByHeaders, parseIntegerFromText, rowToRecord } from "@/lib/scrape-utils";
 
-const DRAFT_DATA_MODE = getEnvDataSourceMode("NEXT_PUBLIC_DRAFT_DATA_MODE");
+const DRAFT_DATA_MODE = getEnvDataSourceMode("NEXT_PUBLIC_DRAFT_DATA_MODE", "live");
 const DRAFT_LIVE_URL_TEMPLATE =
   getEnvVar("NEXT_PUBLIC_DRAFT_LIVE_URL_TEMPLATE") || getEnvVar("DRAFT_LIVE_URL_TEMPLATE");
 
@@ -81,6 +81,7 @@ function buildMockDraftPicks(teamAbbrev: string, year: number): DraftPick[] {
       ? TRADE_SOURCE_TEAMS[seededNumber(`${teamAbbrev}-${year}-r1-src`, TRADE_SOURCE_TEAMS.length)]
       : teamAbbrev,
     isOwnPick: !round1IsTraded,
+    draftedPlayer: null,
     projection: MOCK_PROJECTIONS[String(basePick)] ?? null,
   });
 
@@ -102,6 +103,7 @@ function buildMockDraftPicks(teamAbbrev: string, year: number): DraftPick[] {
         ? TRADE_SOURCE_TEAMS[seededNumber(`${teamAbbrev}-${year}-r${round}-src`, TRADE_SOURCE_TEAMS.length)]
         : teamAbbrev,
       isOwnPick: !isTraded,
+      draftedPlayer: null,
       projection: null,
     });
   }
@@ -110,6 +112,17 @@ function buildMockDraftPicks(teamAbbrev: string, year: number): DraftPick[] {
 }
 
 async function getLiveTeamDraftPicks(params: { teamAbbrev: string; year: number }): Promise<DraftPick[]> {
+  if (typeof window !== "undefined") {
+    const response = await fetch(`/api/nhl/draft/${params.year}`);
+
+    if (!response.ok) {
+      throw new Error(`Draft API request failed with ${response.status}`);
+    }
+
+    const data: NHLDraftResponse = await response.json();
+    return mapNhlDraftPicks(data.picks, params);
+  }
+
   if (DRAFT_LIVE_URL_TEMPLATE) {
     const liveUrl = DRAFT_LIVE_URL_TEMPLATE
       .replace("{team}", params.teamAbbrev.toLowerCase())
@@ -153,6 +166,7 @@ async function getLiveTeamDraftPicks(params: { teamAbbrev: string; year: number 
         ...pick,
         isOwnPick: pick.originalTeamAbbrev === params.teamAbbrev,
         projection: pick.overallPick ? MOCK_PROJECTIONS[String(pick.overallPick)] ?? null : null,
+        draftedPlayer: null,
       }));
 
     if (parsed.length > 0) {
@@ -163,17 +177,37 @@ async function getLiveTeamDraftPicks(params: { teamAbbrev: string; year: number 
   // Fallback to official NHL draft endpoint when no scraper source is configured.
   const livePicks = await getDraftPicks(params.year);
 
+  return mapNhlDraftPicks(livePicks, params);
+}
+
+function mapNhlDraftPicks(
+  livePicks: NHLDraftResponse["picks"],
+  params: { teamAbbrev: string; year: number }
+): DraftPick[] {
   return livePicks
     .filter((pick) => pick.teamAbbrev === params.teamAbbrev)
-    .map((pick) => ({
+    .map((pick) => {
+      const firstName = typeof pick.firstName === "string" ? pick.firstName : pick.firstName.default;
+      const lastName = typeof pick.lastName === "string" ? pick.lastName : pick.lastName.default;
+
+      return {
       year: params.year,
       round: pick.round,
-      overallPick: pick.overallPickNumber,
+      overallPick: pick.overallPickNumber ?? pick.overallPick ?? null,
       teamAbbrev: params.teamAbbrev,
       originalTeamAbbrev: pick.originalTeamAbbrev || params.teamAbbrev,
       isOwnPick: !pick.originalTeamAbbrev || pick.originalTeamAbbrev === params.teamAbbrev,
-      projection: MOCK_PROJECTIONS[String(pick.overallPickNumber)] ?? null,
-    }));
+      draftedPlayer: firstName && lastName
+        ? {
+            fullName: `${firstName} ${lastName}`,
+            position: pick.positionCode,
+            amateurClub: pick.amateurClubName,
+            league: pick.amateurLeague,
+          } satisfies DraftedPlayer
+        : null,
+      projection: null,
+          };
+    });
 }
 
 export async function getTeamDraftPicks(teamAbbrev: string, year: number): Promise<DraftPick[]> {
@@ -183,7 +217,7 @@ export async function getTeamDraftPicks(teamAbbrev: string, year: number): Promi
       mode: DRAFT_DATA_MODE,
       getMock: ({ teamAbbrev: abbrev, year: draftYear }) => buildMockDraftPicks(abbrev, draftYear),
       getLive: getLiveTeamDraftPicks,
-      isLiveResultValid: (picks) => picks.length > 0,
+      isLiveResultValid: () => true,
       onLiveError: (error) => {
         console.warn("Falling back to mock draft data:", error);
       },

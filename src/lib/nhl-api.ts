@@ -209,18 +209,20 @@ export async function getPowerRanking(teamAbbrev: string): Promise<PowerRanking>
 // Draft Picks
 // ============================================================
 
-interface NHLDraftResponse {
+export interface NHLDraftResponse {
   picks: Array<{
     round: number;
     pickInRound: number;
-    overallPickNumber: number;
+    overallPickNumber?: number;
+    overallPick?: number;
     teamAbbrev: string;
     originalTeamAbbrev?: string;
-    firstName: string;
-    lastName: string;
+    firstName: string | { default: string };
+    lastName: string | { default: string };
     positionCode: string;
     amateurClubName: string;
     amateurLeague: string;
+    draftYear?: number;
   }>;
 }
 
@@ -236,7 +238,7 @@ export async function getDraftPicks(year: number): Promise<NHLDraftResponse["pic
   }
 
   const data: NHLDraftResponse = await res.json();
-  return data.picks || [];
+  return (data.picks || []).map((pick) => ({ ...pick, draftYear: year }));
 }
 
 // ============================================================

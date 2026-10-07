@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useTeam } from "@/context/team-context";
 import { DraftPick, DraftProjection } from "@/types/nhl";
-import { cn } from "@/lib/utils";
 import { FileText, ArrowRightLeft, User, Star } from "lucide-react";
 import { getTeamDraftPicks } from "@/lib/draft-api";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -44,11 +43,10 @@ function ProjectedPlayerCard({ projection }: { projection: DraftProjection }) {
 
 export function DraftPicksPageClient() {
     const { selectedTeam } = useTeam();
-    const [activeYear, setActiveYear] = useState(2025);
+    const currentYear = new Date().getFullYear();
     const [picks, setPicks] = useState<DraftPick[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const years = [2025, 2026, 2027];
 
     useEffect(() => {
         let cancelled = false;
@@ -58,7 +56,7 @@ export function DraftPicksPageClient() {
             setError(null);
 
             try {
-                const data = await getTeamDraftPicks(selectedTeam.abbreviation, activeYear);
+                const data = await getTeamDraftPicks(selectedTeam.abbreviation, currentYear);
                 if (!cancelled) {
                     setPicks(data);
                 }
@@ -79,41 +77,19 @@ export function DraftPicksPageClient() {
         return () => {
             cancelled = true;
         };
-    }, [selectedTeam.abbreviation, activeYear]);
+    }, [selectedTeam.abbreviation, currentYear]);
 
     return (
         <div className="flex flex-col gap-8">
             <div>
                 <h2 className="text-2xl font-bold">Draft Picks</h2>
                 <p className="text-sm text-gray-400 mt-1">
-                    {selectedTeam.name} draft picks with projected selections
+                    {selectedTeam.name} draft picks and selections
                 </p>
+                <p className="mt-4 text-sm font-medium text-white">{currentYear} Draft</p>
                 <p className="text-xs text-yellow-400/60 mt-2">
-                    ⚠ Projections are synthesized from public scouting sources and should be treated as directional.
+                    Completed selections are sourced from the official NHL Draft API.
                 </p>
-            </div>
-
-            {/* Year Tabs */}
-            <div className="flex gap-2">
-                {years.map((year) => (
-                    <button
-                        key={year}
-                        onClick={() => setActiveYear(year)}
-                        className={cn(
-                            "rounded-lg px-4 py-2 text-sm font-medium transition-all",
-                            activeYear === year
-                                ? "text-white shadow-lg"
-                                : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
-                        )}
-                        style={
-                            activeYear === year
-                                ? { backgroundColor: "var(--team-primary)", color: "var(--team-text)" }
-                                : undefined
-                        }
-                    >
-                        {year} Draft
-                    </button>
-                ))}
             </div>
 
             {error && (
@@ -167,19 +143,36 @@ export function DraftPicksPageClient() {
                                 )}
                             </div>
 
-                            {pick.projection && (
+                            {(pick.draftedPlayer || pick.projection) && (
                                 <Star className="h-4 w-4 text-yellow-400 shrink-0" />
                             )}
                         </div>
 
-                        {pick.projection && <ProjectedPlayerCard projection={pick.projection} />}
+                        {pick.draftedPlayer ? (
+                            <div className="mt-3 rounded-lg border border-white/10 bg-white/5 p-4">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div>
+                                        <div className="font-bold" style={{ color: "var(--team-secondary)" }}>
+                                            {pick.draftedPlayer.fullName}
+                                        </div>
+                                        <div className="text-xs text-gray-400">
+                                            {pick.draftedPlayer.position} · {pick.draftedPlayer.amateurClub} ·{" "}
+                                            {pick.draftedPlayer.league}
+                                        </div>
+                                    </div>
+                                    <span className="text-[10px] uppercase tracking-wide text-gray-500">NHL data</span>
+                                </div>
+                            </div>
+                        ) : pick.projection ? (
+                            <ProjectedPlayerCard projection={pick.projection} />
+                        ) : null}
                     </div>
                 ))}
 
                 {!loading && picks.length === 0 && (
                     <div className="text-center py-12 text-gray-500">
                         <FileText className="h-8 w-8 mx-auto mb-3 opacity-40" />
-                        <p>No draft picks found for {activeYear}</p>
+                        <p>No draft picks found for {currentYear}</p>
                     </div>
                 )}
             </div>

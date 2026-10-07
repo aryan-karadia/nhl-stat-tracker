@@ -104,6 +104,8 @@ Examples:
 
 Important notes:
 
+- Draft picks use live NHL data by default. Set `NEXT_PUBLIC_DRAFT_DATA_MODE=mock` only when deterministic local data is needed.
+- The prospect pool uses official NHL draft selections from the current draft year and previous five drafts by default. Set `NEXT_PUBLIC_PROSPECTS_DATA_MODE=mock` only when deterministic local data is needed.
 - These scrapers are intentionally lightweight and depend on table structure stability.
 - If the source layout changes, `auto` mode falls back to mock data.
 - Always confirm source terms of use before scraping.

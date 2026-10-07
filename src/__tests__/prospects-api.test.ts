@@ -9,6 +9,9 @@ describe("getProspectPool", () => {
   });
 
   it("returns mock prospect data by default", async () => {
+    (globalThis as { process?: { env?: Record<string, string | undefined> } }).process = {
+      env: { NEXT_PUBLIC_PROSPECTS_DATA_MODE: "mock" },
+    };
     const module = await import("@/lib/prospects-api");
     const prospects = await module.getProspectPool("TOR");
 
@@ -27,7 +30,7 @@ describe("getProspectPool", () => {
 
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
-      text: async () => "<html><body>No valid table</body></html>",
+      json: async () => [],
     }) as unknown as typeof fetch;
 
     const module = await import("@/lib/prospects-api");

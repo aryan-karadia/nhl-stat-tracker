@@ -49,10 +49,10 @@ export function ProspectPoolPageClient() {
       <div>
         <h2 className="text-2xl font-bold">Prospect Pool</h2>
         <p className="text-sm text-gray-400 mt-1">
-          {selectedTeam.name} development pipeline and scouting reports
+          {selectedTeam.name} drafted players and development pipeline
         </p>
         <p className="text-xs text-yellow-400/60 mt-2">
-          ⚠ Scouting notes are synthesized from public prospect sources and should be treated as directional.
+          Draft information is sourced from the official NHL Draft API. Current team and development details may change.
         </p>
       </div>
 
@@ -88,7 +88,7 @@ export function ProspectPoolPageClient() {
                   {prospect.fullName}
                 </h3>
                 <p className="text-xs text-gray-400">
-                  {prospect.position} · Age {prospect.age} · {prospect.currentTeam} ({prospect.league})
+                  {prospect.position} · {prospect.age ? `Age ${prospect.age} · ` : ""}{prospect.currentTeam} ({prospect.league})
                 </p>
               </div>
               {prospect.draftInfo && (

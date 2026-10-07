@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { DraftPicksPageClient } from "@/app/draft-picks/client";
 import { getTeamDraftPicks } from "@/lib/draft-api";
 
@@ -21,10 +21,11 @@ jest.mock("@/context/team-context", () => ({
 }));
 
 const mockedGetTeamDraftPicks = getTeamDraftPicks as jest.MockedFunction<typeof getTeamDraftPicks>;
+const CURRENT_YEAR = new Date().getFullYear();
 
 const SAMPLE_PICKS = [
     {
-        year: 2025,
+        year: CURRENT_YEAR,
         round: 1,
         overallPick: 5,
         teamAbbrev: "TOR",
@@ -40,7 +41,7 @@ const SAMPLE_PICKS = [
         },
     },
     {
-        year: 2025,
+        year: CURRENT_YEAR,
         round: 2,
         overallPick: 37,
         teamAbbrev: "TOR",
@@ -64,53 +65,21 @@ describe("DraftPicksPageClient", () => {
         expect(screen.getByText("Draft Picks")).toBeInTheDocument();
         expect(screen.getByText(/Toronto Maple Leafs draft picks/i)).toBeInTheDocument();
         await waitFor(() => {
-            expect(mockedGetTeamDraftPicks).toHaveBeenCalledWith("TOR", 2025);
+            expect(mockedGetTeamDraftPicks).toHaveBeenCalledWith("TOR", CURRENT_YEAR);
         });
     });
 
-    it("renders year tabs", () => {
+    it("renders the current draft year", () => {
         render(<DraftPicksPageClient />);
-        expect(screen.getByText("2025 Draft")).toBeInTheDocument();
-        expect(screen.getByText("2026 Draft")).toBeInTheDocument();
-        expect(screen.getByText("2027 Draft")).toBeInTheDocument();
-    });
-
-    it("changes active year on tab click", async () => {
-        render(<DraftPicksPageClient />);
-        const tab2026 = screen.getByText("2026 Draft");
-        fireEvent.click(tab2026);
-
-        // The active year tab should have the team-primary background (check via style)
-        expect(tab2026).toHaveStyle("background-color: var(--team-primary)");
-
-        await waitFor(() => {
-            expect(mockedGetTeamDraftPicks).toHaveBeenCalledWith("TOR", 2026);
-        });
+        expect(screen.getByText(`${CURRENT_YEAR} Draft`)).toBeInTheDocument();
+        expect(screen.queryByText(`${CURRENT_YEAR + 1} Draft`)).not.toBeInTheDocument();
+        expect(screen.queryByText(`${CURRENT_YEAR + 2} Draft`)).not.toBeInTheDocument();
     });
 
     it("renders at least one pick with overall number when 2025 is selected", async () => {
         render(<DraftPicksPageClient />);
         await waitFor(() => {
             expect(screen.getAllByText(/#\d+ overall/i).length).toBeGreaterThan(0);
-        });
-    });
-
-    it("renders 'Pick position TBD' for future years (2026/2027)", async () => {
-        mockedGetTeamDraftPicks
-            .mockResolvedValueOnce(SAMPLE_PICKS)
-            .mockResolvedValueOnce([
-            {
-                ...SAMPLE_PICKS[0],
-                year: 2026,
-                overallPick: null,
-            },
-        ]);
-
-        render(<DraftPicksPageClient />);
-        fireEvent.click(screen.getByText("2026 Draft"));
-
-        await waitFor(() => {
-            expect(screen.getAllByText("Pick position TBD").length).toBeGreaterThan(0);
         });
     });
 

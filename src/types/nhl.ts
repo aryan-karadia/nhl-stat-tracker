@@ -122,6 +122,13 @@ export interface DraftProjection {
   sources: string[];
 }
 
+export interface DraftedPlayer {
+  fullName: string;
+  position: string;
+  amateurClub: string;
+  league: string;
+}
+
 export interface DraftPick {
   year: number;
   round: number;
@@ -129,6 +136,7 @@ export interface DraftPick {
   teamAbbrev: string;
   originalTeamAbbrev: string; // differs if pick was traded
   isOwnPick: boolean;
+  draftedPlayer?: DraftedPlayer | null;
   projection: DraftProjection | null;
 }
 
@@ -146,7 +154,7 @@ export interface Prospect {
   teamAbbrev: string;
   fullName: string;
   position: string;
-  age: number;
+  age: number | null;
   currentTeam: string;
   league: string;
   draftInfo?: string;

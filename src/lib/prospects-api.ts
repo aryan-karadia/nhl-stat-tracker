@@ -1,8 +1,9 @@
 import { getEnvDataSourceMode, getEnvVar, resolveDataSource } from "@/lib/data-source";
+import { getDraftPicks, NHLDraftResponse } from "@/lib/nhl-api";
 import { Prospect } from "@/types/nhl";
 import { extractTablesFromHtml, findTableByHeaders, parseIntegerFromText, rowToRecord } from "@/lib/scrape-utils";
 
-const PROSPECTS_DATA_MODE = getEnvDataSourceMode("NEXT_PUBLIC_PROSPECTS_DATA_MODE");
+const PROSPECTS_DATA_MODE = getEnvDataSourceMode("NEXT_PUBLIC_PROSPECTS_DATA_MODE", "live");
 const PROSPECTS_LIVE_URL_TEMPLATE =
   getEnvVar("NEXT_PUBLIC_PROSPECTS_LIVE_URL_TEMPLATE") || getEnvVar("PROSPECTS_LIVE_URL_TEMPLATE");
 
@@ -66,8 +67,49 @@ function mockProspectPool(teamAbbrev: string): Prospect[] {
 }
 
 async function getLiveProspects(teamAbbrev: string): Promise<Prospect[]> {
+  if (typeof window !== "undefined") {
+    const response = await fetch(`/api/nhl/prospects/${teamAbbrev}`);
+    if (!response.ok) {
+      throw new Error(`Prospect API request failed with ${response.status}`);
+    }
+    return response.json();
+  }
+
   if (!PROSPECTS_LIVE_URL_TEMPLATE) {
-    throw new Error("Prospects live URL template is not configured.");
+    return getDraftBasedProspects(teamAbbrev);
+  }
+
+  async function getDraftBasedProspects(teamAbbrev: string): Promise<Prospect[]> {
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 6 }, (_, index) => currentYear - index);
+    const responses = await Promise.all(years.map((year) => getDraftPicks(year)));
+
+    return responses
+      .flat()
+      .filter((pick) => pick.teamAbbrev === teamAbbrev && pick.firstName && pick.lastName)
+      .map((pick) => {
+        const firstName = typeof pick.firstName === "string" ? pick.firstName : pick.firstName.default;
+        const lastName = typeof pick.lastName === "string" ? pick.lastName : pick.lastName.default;
+        const overallPick = pick.overallPickNumber ?? pick.overallPick ?? 0;
+
+        return {
+        id: `${teamAbbrev}-${pick.draftYear ?? currentYear}-${overallPick}`,
+        teamAbbrev,
+        fullName: `${firstName} ${lastName}`,
+        position: pick.positionCode,
+        age: null,
+        currentTeam: pick.amateurClubName,
+        league: pick.amateurLeague,
+        draftInfo: `${pick.draftYear ?? currentYear} - Round ${pick.round}, Pick ${overallPick}`,
+        report: {
+          summary: `Selected ${overallPick}th overall by ${teamAbbrev} in the NHL Draft.`,
+          strengths: [],
+          developmentAreas: [],
+          sourceNotes: ["Official NHL Draft API"],
+          confidence: "high" as const,
+        },
+        };
+      });
   }
 
   const liveUrl = PROSPECTS_LIVE_URL_TEMPLATE.replace("{team}", teamAbbrev.toLowerCase());

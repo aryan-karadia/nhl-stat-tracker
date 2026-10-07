@@ -51,7 +51,7 @@ describe("ProspectPoolPageClient", () => {
   it("renders heading and team description", async () => {
     render(<ProspectPoolPageClient />);
     expect(screen.getByText("Prospect Pool")).toBeInTheDocument();
-    expect(screen.getByText(/Toronto Maple Leafs development pipeline/i)).toBeInTheDocument();
+    expect(screen.getByText(/Toronto Maple Leafs drafted players and development pipeline/i)).toBeInTheDocument();
 
     await waitFor(() => {
       expect(mockedGetProspectPool).toHaveBeenCalledWith("TOR");
