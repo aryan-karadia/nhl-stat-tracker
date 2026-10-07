@@ -1,5 +1,5 @@
 import { getEnvDataSourceMode, getEnvVar, resolveDataSource } from "@/lib/data-source";
-import { getDraftPicks, NHLDraftResponse } from "@/lib/nhl-api";
+import { getDraftPicks } from "@/lib/nhl-api";
 import { Prospect } from "@/types/nhl";
 import { extractTablesFromHtml, findTableByHeaders, parseIntegerFromText, rowToRecord } from "@/lib/scrape-utils";
 

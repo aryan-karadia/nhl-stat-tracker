@@ -12,8 +12,8 @@ describe("getProspectPool", () => {
     (globalThis as { process?: { env?: Record<string, string | undefined> } }).process = {
       env: { NEXT_PUBLIC_PROSPECTS_DATA_MODE: "mock" },
     };
-    const module = await import("@/lib/prospects-api");
-    const prospects = await module.getProspectPool("TOR");
+    const prospectsApi = await import("@/lib/prospects-api");
+    const prospects = await prospectsApi.getProspectPool("TOR");
 
     expect(Array.isArray(prospects)).toBe(true);
     expect(prospects.length).toBeGreaterThan(0);
@@ -33,8 +33,8 @@ describe("getProspectPool", () => {
       json: async () => [],
     }) as unknown as typeof fetch;
 
-    const module = await import("@/lib/prospects-api");
-    const prospects = await module.getProspectPool("TOR");
+    const prospectsApi = await import("@/lib/prospects-api");
+    const prospects = await prospectsApi.getProspectPool("TOR");
 
     expect(prospects.length).toBeGreaterThan(0);
     expect(prospects[0].fullName).toBeTruthy();
